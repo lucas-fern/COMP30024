@@ -2,6 +2,7 @@ game-rules.pdf
 specification-A.pdf
 
 __pycache__
+.idea
 
 # For LaTeX (source: https://github.com/github/gitignore/blob/master/TeX.gitignore)
 ## Core latex/pdflatex auxiliary files:
