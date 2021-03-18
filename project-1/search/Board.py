@@ -4,6 +4,8 @@ from search.Piece import *
 
 
 class Board:
+    """A class to represent the hexagonal game board. The board is defined with a radius attribute so that we aren't
+    constrained to playing on a radius 5 grid, though I think we will only ever play on a board this size."""
     def __init__(self, radius=5):
         self.radius = radius
 

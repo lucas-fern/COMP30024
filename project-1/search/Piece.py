@@ -5,10 +5,11 @@ class Piece:
     def __init__(self, identifier, board):
         if identifier:
             self.team = Team.UPPER if identifier.isupper() else Team.LOWER
+            self.symbol = Symbol(identifier.upper())  # Assigns a Symbol Enum based on the identifier string
         else:
             self.team = Team.BLOCK
+            self.symbol = Symbol.BLOCK
 
-        self.symbol = Symbol(identifier.upper())  # Assigns a Symbol Enum based on the identifier string
         self.board = board
 
     def __repr__(self):
@@ -21,7 +22,7 @@ class Piece:
             > print(a)
         This allows us to just print the pieces directly in util.print_board().
         """
-        return self.symbol.value if self.team == Team.UPPER else self.symbol.value.lower()
+        return self.symbol.value.lower() if self.team == Team.LOWER else self.symbol.value
 
 
 class Team(Enum):
@@ -34,4 +35,4 @@ class Symbol(Enum):
     ROCK = 'R'
     PAPER = 'P'
     SCISSORS = 'S'
-    BLOCK = ''
+    BLOCK = 'B'
