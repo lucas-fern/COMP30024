@@ -16,20 +16,19 @@ from search.util import print_board, print_slide, print_swing
 from search.Board import Board
 
 
-def main():
-    try:
-        with open(sys.argv[1]) as file:
-            data = json.load(file)
-    except IndexError:
-        print("usage: python3 -m search path/to/input.json", file=sys.stderr)
-        sys.exit(1)
+try:
+    with open(sys.argv[1]) as file:
+        data = json.load(file)
+except IndexError:
+    print("usage: python3 -m search path/to/input.json", file=sys.stderr)
+    sys.exit(1)
 
-    game_board = Board(radius=5)
-    game_board.populate_grid(data)
-    game_board.print_grid()
-    for piece in [*game_board.upper_pieces, *game_board.lower_pieces]:
-        print('#', piece, piece.coord)
-        print('#', piece.get_adjacent_hexes())
-
-
-main()
+game_board = Board(radius=5)
+game_board.populate_grid(data)
+game_board.print_grid()
+for piece in [*game_board.upper_pieces, *game_board.lower_pieces]:
+    print('#', piece, piece.coord)
+    print('# adjacent hexes: ', piece.get_adjacent_hexes())
+    print('# valid slide moves: ', piece.get_valid_slides())
+    print('# adjacent friendly hexes: ', piece.get_adjacent_friendlies())
+    print('# valid swing moves: ', piece.get_valid_swings())

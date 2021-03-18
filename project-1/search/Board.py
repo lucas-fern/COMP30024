@@ -13,6 +13,7 @@ class Board:
         self.radius = radius
         self.lower_pieces = []
         self.upper_pieces = []
+        self.blocked_coords = set()
 
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -21,6 +22,20 @@ class Board:
         self.grid = np.empty((radius * 2 - 1, radius * 2 - 1), dtype=object)
         for row, col in np.ndindex(self.grid.shape):
             self.grid[row, col] = []
+
+    def __getitem__(self, item):
+        """Makes the board subscriptable, this means instead of having to access the grid to get the pieces in it with
+            > board.grid[row, col]
+        we can directly index the board object and it will return the same thing. eg.
+            > board[row, col]
+        and
+            > board[row, col] == board.grid[row, col]
+            True
+
+        Can pass a coordinate into board[] as a tuple, eg. board[(1, 3)] that way we don't even need to deconstruct
+        coordinates. This whole method is syntactic sugar but very nice :)
+        """
+        return self.grid[item[0], item[1]]
 
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
@@ -32,8 +47,10 @@ class Board:
 
             if identifier.islower():
                 self.lower_pieces.append(piece)
-            else:
+            elif identifier.isupper():
                 self.upper_pieces.append(piece)
+            else:
+                self.blocked_coords |= {coordinate}  # | is the python set union operator (as well as logical or)
 
     def populate_grid(self, initial_dict):
         """Fills the board grid from a dictionary of pieces and positions. The dictionary should be structured as
