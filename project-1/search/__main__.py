@@ -13,6 +13,7 @@ import json
 # inside the `search` directory (like this one and `util.py`) and
 # then import from them like this:
 from search.util import print_board, print_slide, print_swing
+from search.Board import Board
 
 
 def main():
@@ -21,16 +22,12 @@ def main():
             data = json.load(file)
         print(data)
     except IndexError:
-        print("error")
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
 
-    # TODO:
-    # Find and print a solution to the board configuration described
-    # by `data`.
-    # Why not start by trying to print this configuration out using the
-    # `print_board` helper function? (See the `util.py` source code for
-    # usage information).
+    game_board = Board(radius=5)
+    game_board.populate_grid(data)
+    game_board.print_grid()
 
 
 main()
