@@ -5,6 +5,7 @@ from search.util import print_board
 class Board:
     def __init__(self, radius=5):
         self.radius = radius
+
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
         # To visualise, imagine taking the diagram on p2 of spec-A.pdf and rotating the q axis to be horizontal
@@ -14,11 +15,14 @@ class Board:
             self.grid[row, col] = []
 
     def add_piece(self, coordinate: tuple, piece: str):
+        """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
         if -self.radius < sum(coordinate) < self.radius:  # Valid positions on the board follow this rule!
             array_coord = self.centered_to_array_coord(coordinate)
             self.grid[array_coord[0], array_coord[1]].append(piece)
 
     def populate_grid(self, initial_dict):
+        """Fills the board grid from a dictionary of pieces and positions. The dictionary should be structured as
+        if it was loaded from a JSON test case."""
         for piece in initial_dict['upper']:
             self.add_piece((piece[1], piece[2]), piece[0].upper())
         for piece in [*initial_dict['lower'], *initial_dict['block']]:  # Unpack and combine the two piece lists
@@ -71,12 +75,16 @@ class Board:
         return -translated[0], translated[1]  # Element wise sum of the coordinate and offset
 
     def array_to_centered_coord(self, coordinate: tuple) -> tuple:
+        """Performs the inverse transformation to centered_to_array_coord(). Transforms coordinates from the array
+        coordinate system to centered axial coordinates."""
         inverted = (-coordinate[0], coordinate[1])
         offset = ((self.radius - 1), -(self.radius - 1))
 
         return tuple([sum(x) for x in zip(inverted, offset)])  # Element wise sum of the coordinate and offset
 
     def grid_to_dict(self) -> dict:
+        """Converts the board grid to a dictionary of coordinate: piece(s) pairs. The dictionary is compatible with
+        search.util.print_board()."""
         centered_dict = {}
         for row, col in np.ndindex(self.grid.shape):
             if self.grid[row, col]:
@@ -85,6 +93,8 @@ class Board:
         return centered_dict
 
     def print_grid(self, compact=False) -> None:
+        """Converts the board grid to a dictionary using grid_to_dict() and uses search.util.print_board() to print
+        a visual representation of the board state."""
         print_dict = self.grid_to_dict()
         print_board(print_dict, compact=compact)
 
