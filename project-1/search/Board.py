@@ -1,5 +1,6 @@
 import numpy as np
 from search.util import print_board
+from search.Piece import *
 
 
 class Board:
@@ -14,10 +15,11 @@ class Board:
         for row, col in np.ndindex(self.grid.shape):
             self.grid[row, col] = []
 
-    def add_piece(self, coordinate: tuple, piece: str):
+    def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
         if -self.radius < sum(coordinate) < self.radius:  # Valid positions on the board follow this rule!
             array_coord = self.centered_to_array_coord(coordinate)
+            piece = Piece(identifier, self)  # self passes in a reference to this game board to be stored by the piece
             self.grid[array_coord[0], array_coord[1]].append(piece)
 
     def populate_grid(self, initial_dict):
