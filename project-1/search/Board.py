@@ -5,9 +5,14 @@ from search.Piece import *
 
 class Board:
     """A class to represent the hexagonal game board. The board is defined with a radius attribute so that we aren't
-    constrained to playing on a radius 5 grid, though I think we will only ever play on a board this size."""
+    constrained to playing on a radius 5 grid, though I think we will only ever play on a board this size.
+
+    We want to work in centered coordinates wherever possible and only convert to array coordinates for accessing the
+    pieces in the board grid."""
     def __init__(self, radius=5):
         self.radius = radius
+        self.lower_pieces = []
+        self.upper_pieces = []
 
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -21,8 +26,14 @@ class Board:
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
         if -self.radius < sum(coordinate) < self.radius:  # Valid positions on the board follow this rule!
             array_coord = self.centered_to_array_coord(coordinate)
-            piece = Piece(identifier, self)  # self passes in a reference to this game board to be stored by the piece
+            # self passes in a reference to this game board to be stored by the Piece
+            piece = Piece(identifier, coordinate, self)
             self.grid[array_coord[0], array_coord[1]].append(piece)
+
+            if identifier.islower():
+                self.lower_pieces.append(piece)
+            else:
+                self.upper_pieces.append(piece)
 
     def populate_grid(self, initial_dict):
         """Fills the board grid from a dictionary of pieces and positions. The dictionary should be structured as
@@ -84,7 +95,7 @@ class Board:
         inverted = (-coordinate[0], coordinate[1])
         offset = ((self.radius - 1), -(self.radius - 1))
 
-        return tuple([sum(x) for x in zip(inverted, offset)])  # Element wise sum of the coordinate and offset
+        return tuple(sum(x) for x in zip(inverted, offset))  # Element wise sum of the coordinate and offset
 
     def grid_to_dict(self) -> dict:
         """Converts the board grid to a dictionary of coordinate: piece(s) pairs. The dictionary is compatible with

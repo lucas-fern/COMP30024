@@ -27,6 +27,9 @@ def main():
     game_board = Board(radius=5)
     game_board.populate_grid(data)
     game_board.print_grid()
+    for piece in [*game_board.upper_pieces, *game_board.lower_pieces]:
+        print('#', piece, piece.coord)
+        print('#', piece.get_adjacent_hexes())
 
 
 main()
