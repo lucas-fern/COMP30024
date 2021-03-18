@@ -20,7 +20,6 @@ def main():
     try:
         with open(sys.argv[1]) as file:
             data = json.load(file)
-        print(data)
     except IndexError:
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
