@@ -35,7 +35,6 @@ all_pieces = {**game_board.upper_pieces, **game_board.lower_pieces}
 for identifier in all_pieces:
     coordinates = all_pieces[identifier]
     for coordinate in coordinates:
-
         print('#', identifier, coordinate)
         print('# adjacent hexes: ', get_adjacent_hexes(coordinate, game_board.radius))
         print('# valid slide moves: ', get_valid_slides(coordinate, game_board.radius, game_board.blocked_coords))
@@ -43,4 +42,5 @@ for identifier in all_pieces:
                                                                      game_board.radius))
         print('# valid swing moves: ', get_valid_swings(coordinate, identifier, game_board.grid,
                                                         game_board.radius, game_board.blocked_coords))
-        # Board.generate_token_moves(game_board.grid, game_board.upper_pieces)
+
+Board.generate_token_moves(game_board.grid, game_board.upper_pieces, game_board.radius, game_board.blocked_coords)

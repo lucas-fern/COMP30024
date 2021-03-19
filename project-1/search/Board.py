@@ -40,17 +40,22 @@ class Board:
         return self.grid[item[0], item[1]]
 
     @staticmethod
-    def generate_token_moves(grid: np.ndarray, tokens: dict) -> list[np.ndarray]:
-        moves = {}
-        for piece in tokens:
-            slide_moves = set((piece, Move.SLIDE, tile) for tile in piece.get_valid_slides())
-            swing_moves = set((piece, Move.SWING, tile) for tile in piece.get_valid_swings())
-            moves[piece] = slide_moves | swing_moves
+    def generate_token_moves(grid: np.ndarray, tokens: dict, board_radius, blocked_coords) -> list[np.ndarray]:
+        moves = []
+        for identifier in tokens:
+            for from_tile in tokens[identifier]:
+                # Cant use sets since multiple identical pieces can exist on the same coordinate
+                slide_moves = [(identifier, from_tile, Move.SLIDE, to_tile) for to_tile in
+                               get_valid_slides(from_tile, board_radius, blocked_coords)]
+                swing_moves = [(identifier, from_tile, Move.SWING, to_tile) for to_tile in
+                               get_valid_swings(from_tile, identifier, grid, board_radius, blocked_coords)]
+                moves.append((*slide_moves, *swing_moves))
 
         moved_boards = set()
-        movement_options = itertools.product(*moves.values())
-        for moves in movement_options:
-            new_grid = copy.deepcopy(grid)
+        movement_options = itertools.product(*moves)
+        print(list(movement_options))
+        # for moves in movement_options:
+        #     new_grid = copy.deepcopy(grid)
 
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
