@@ -1,6 +1,8 @@
 import numpy as np
+import copy
+import itertools
 from search.util import print_board
-from search.Piece import *
+from search.board_util import *
 
 
 class Board:
@@ -11,8 +13,8 @@ class Board:
     pieces in the board grid."""
     def __init__(self, radius=5):
         self.radius = radius
-        self.lower_pieces = []
-        self.upper_pieces = []
+        self.lower_pieces = {'r': [], 'p': [], 's': []}
+        self.upper_pieces = {'R': [], 'P': [], 'S': []}
         self.blocked_coords = set()
 
         # Initialises a board of empty lists - the board will be filled according to
@@ -37,20 +39,32 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
+    @staticmethod
+    def generate_token_moves(grid: np.ndarray, tokens: dict) -> list[np.ndarray]:
+        moves = {}
+        for piece in tokens:
+            slide_moves = set((piece, Move.SLIDE, tile) for tile in piece.get_valid_slides())
+            swing_moves = set((piece, Move.SWING, tile) for tile in piece.get_valid_swings())
+            moves[piece] = slide_moves | swing_moves
+
+        moved_boards = set()
+        movement_options = itertools.product(*moves.values())
+        for moves in movement_options:
+            new_grid = copy.deepcopy(grid)
+
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
         if -self.radius < sum(coordinate) < self.radius:  # Valid positions on the board follow this rule!
-            array_coord = self.centered_to_array_coord(coordinate)
+            array_coord = centered_to_array_coord(coordinate, self.radius)
             # self passes in a reference to this game board to be stored by the Piece
-            piece = Piece(identifier, coordinate, self)
-            self.grid[array_coord[0], array_coord[1]].append(piece)
+            self.grid[array_coord].append(identifier)
 
             if identifier.islower():
-                self.lower_pieces.append(piece)
+                self.lower_pieces[identifier].append(coordinate)
             elif identifier.isupper():
-                self.upper_pieces.append(piece)
+                self.upper_pieces[identifier].append(coordinate)
             else:
-                self.blocked_coords |= {coordinate}  # | is the python set union operator (as well as logical or)
+                self.blocked_coords.add(coordinate)
 
     def populate_grid(self, initial_dict):
         """Fills the board grid from a dictionary of pieces and positions. The dictionary should be structured as
@@ -60,67 +74,13 @@ class Board:
         for piece in [*initial_dict['lower'], *initial_dict['block']]:  # Unpack and combine the two piece lists
             self.add_piece((piece[1], piece[2]), piece[0])
 
-    def centered_to_array_coord(self, coordinate: tuple) -> tuple:
-        """Converts an axial coordinate with (0, 0) in the center of the grid to an axial coordinate with (0, 0) in the
-        top left hex. Reverses the positive row direction so that increasing the row moves down the grid.
-
-        Example:
-            Centered Coordinates:
-                _,-' `-._,-' `-._
-                |       |       |
-                |  1,-1 |  1, 0 |
-            _,-' `-._,-' `-._,-' `-._
-            |       |       |       |
-            |  0,-1 |  0, 0 |  0, 1 |
-             `-._,-' `-._,-' `-._,-'
-                |       |       |
-                | -1, 0 | -1, 1 |
-                 `-._,-' `-._,-'
-
-            Array Coordinates:
-                _,-' `-._,-' `-._
-                |       |       |
-                |  0, 0 |  0, 1 |
-            _,-' `-._,-' `-._,-' `-._
-            |       |       |       |
-            |  1, 0 |  1, 1 |  1, 2 |
-             `-._,-' `-._,-' `-._,-'
-                |       |       |
-                |  2, 1 |  2, 2 |
-                 `-._,-' `-._,-'
-
-            Array Coordinates in Array:
-            +--------+--------+--------+
-            | (0, 0) | (0, 1) | None   |
-            +--------+--------+--------+
-            | (1, 0) | (1, 1) | (1, 2) |
-            +--------+--------+--------+
-            | None   | (2, 1) | (2, 2) |
-            +--------+--------+--------+
-                > Notice how the array coordinates correspond to a real array index that we can plug straight into
-                > a numpy array to access that hex! nice
-
-            """
-        offset = (-(self.radius - 1), (self.radius - 1))
-        translated = [sum(x) for x in zip(coordinate, offset)]
-
-        return -translated[0], translated[1]  # Element wise sum of the coordinate and offset
-
-    def array_to_centered_coord(self, coordinate: tuple) -> tuple:
-        """Performs the inverse transformation to centered_to_array_coord(). Transforms coordinates from the array
-        coordinate system to centered axial coordinates."""
-        inverted = (-coordinate[0], coordinate[1])
-        offset = ((self.radius - 1), -(self.radius - 1))
-
-        return tuple(sum(x) for x in zip(inverted, offset))  # Element wise sum of the coordinate and offset
-
     def grid_to_dict(self) -> dict:
         """Converts the board grid to a dictionary of coordinate: piece(s) pairs. The dictionary is compatible with
         search.util.print_board()."""
         centered_dict = {}
         for row, col in np.ndindex(self.grid.shape):
             if self.grid[row, col]:
-                centered_dict[self.array_to_centered_coord((row, col))] = self.grid[row, col]
+                centered_dict[array_to_centered_coord((row, col), self.radius)] = self.grid[row, col]
 
         return centered_dict
 
@@ -129,4 +89,3 @@ class Board:
         a visual representation of the board state."""
         print_dict = self.grid_to_dict()
         print_board(print_dict, compact=compact)
-

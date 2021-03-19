@@ -14,6 +14,7 @@ import json
 # then import from them like this:
 from search.util import print_board, print_slide, print_swing
 from search.Board import Board
+from search.board_util import *
 
 
 try:
@@ -26,9 +27,20 @@ except IndexError:
 game_board = Board(radius=5)
 game_board.populate_grid(data)
 game_board.print_grid()
-for piece in [*game_board.upper_pieces, *game_board.lower_pieces]:
-    print('#', piece, piece.coord)
-    print('# adjacent hexes: ', piece.get_adjacent_hexes())
-    print('# valid slide moves: ', piece.get_valid_slides())
-    print('# adjacent friendly hexes: ', piece.get_adjacent_friendlies())
-    print('# valid swing moves: ', piece.get_valid_swings())
+
+# {**game_board.upper_pieces, **game_board.lower_pieces} is a merge of the two dictionaries, in python 3.9 we can use
+# game_board.upper_pieces | game_board.lower_pieces, but I don't know if that's what you're using, and I doubt its
+# what the assessment server will be using.
+all_pieces = {**game_board.upper_pieces, **game_board.lower_pieces}
+for identifier in all_pieces:
+    coordinates = all_pieces[identifier]
+    for coordinate in coordinates:
+
+        print('#', identifier, coordinate)
+        print('# adjacent hexes: ', get_adjacent_hexes(coordinate, game_board.radius))
+        print('# valid slide moves: ', get_valid_slides(coordinate, game_board.radius, game_board.blocked_coords))
+        print('# adjacent friendly hexes: ', get_adjacent_friendlies(coordinate, identifier, game_board.grid,
+                                                                     game_board.radius))
+        print('# valid swing moves: ', get_valid_swings(coordinate, identifier, game_board.grid,
+                                                        game_board.radius, game_board.blocked_coords))
+        # Board.generate_token_moves(game_board.grid, game_board.upper_pieces)
