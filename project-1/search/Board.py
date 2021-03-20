@@ -100,7 +100,8 @@ class Board:
         centered_dict = {}
         for row, col in np.ndindex(self.grid.shape):
             if self.grid[row, col]:
-                string = ''.join(self.grid[row, col])
+                pieces = self.grid[row, col]
+                string = ''.join([piece if piece else 'Block' for piece in pieces])
                 centered_dict[array_to_centered_coord((row, col), self.radius)] = string
 
         return centered_dict
