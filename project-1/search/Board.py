@@ -39,8 +39,7 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
-    @staticmethod
-    def generate_token_moves(self): #-> list[np.ndarray]:
+    def generate_token_moves(self):
         moves = []
         for identifier in self.upper_pieces:
             for from_tile in self.upper_pieces[identifier]:
@@ -94,7 +93,8 @@ class Board:
         centered_dict = {}
         for row, col in np.ndindex(self.grid.shape):
             if self.grid[row, col]:
-                centered_dict[array_to_centered_coord((row, col), self.radius)] = self.grid[row, col]
+                string = ''.join(self.grid[row, col])
+                centered_dict[array_to_centered_coord((row, col), self.radius)] = string
 
         return centered_dict
 

@@ -109,9 +109,11 @@ def get_valid_swings(centered_coord, identifier, board_grid, board_radius, block
     return valid_swings - blocked_coords - get_valid_slides(centered_coord, board_radius, blocked_coords) \
         - {centered_coord}
 
+
 def get_valid_moves(centered_coord, identifier, board_grid, board_radius, blocked_coords):
     return get_valid_swings(centered_coord,identifier,board_grid,board_radius,blocked_coords) | get_valid_slides(
         centered_coord, board_radius, blocked_coords)
+
 
 def get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius):
     adjacent_friendlies = set()
@@ -124,6 +126,7 @@ def get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius
 
     return adjacent_friendlies
 
+
 def apply_moves(board, move_set):
     """ Doesn't currently check for validity of moves but every move should have been checked by the time it gets
     here """
@@ -134,6 +137,7 @@ def apply_moves(board, move_set):
         new_board.grid[arraycoords_from].remove(move[0])
         new_board.grid[arraycoords_to].append(move[0])
     return new_board
+
 
 def get_team(identifier):
     if identifier.isupper():
