@@ -1,6 +1,6 @@
 import numpy as np
-import copy
-import itertools, sys
+import itertools
+import sys
 from search.util import print_board
 from search.board_util import *
 
@@ -51,18 +51,25 @@ class Board:
                 moves.append((*slide_moves, *swing_moves))
 
         # Calculate all possible sets of moves for upper
-        movement_options = itertools.product(*moves)
-        mo_list = list(movement_options)
-        print(mo_list)
-        print("trying to print boards")
-        board_set = []
-        for move_set in mo_list:
+        movement_options = list(itertools.product(*moves))
+
+        print(movement_options)
+        print("# Printing boards")
+
+        board_set = []  # If we define Board.__hash__() then we can make this a set to remove duplicates.
+        for move_set in movement_options:
             try:
                 new_board = apply_moves(self, move_set)
                 board_set.append(new_board)
-            except:
-                print("applying move failed", file=sys.stderr)
+            except IndexError:
+                print("Board index out of range.", file=sys.stderr)
+                # Probably shouldn't have any chances to exit() in final code, just continue anyway to get some marks
                 sys.exit(1)
+            except ValueError:
+                print("Piece does not exist at coordinate.", file=sys.stderr)
+                # Ditto above
+                sys.exit(1)
+
         return board_set
 
     def add_piece(self, coordinate: tuple, identifier: str):
