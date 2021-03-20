@@ -1,6 +1,6 @@
 import numpy as np
 import copy
-import itertools
+import itertools, sys
 from search.util import print_board
 from search.board_util import *
 
@@ -40,22 +40,31 @@ class Board:
         return self.grid[item[0], item[1]]
 
     @staticmethod
-    def generate_token_moves(grid: np.ndarray, tokens: dict, board_radius, blocked_coords) -> list[np.ndarray]:
+    def generate_token_moves(self): #-> list[np.ndarray]:
         moves = []
-        for identifier in tokens:
-            for from_tile in tokens[identifier]:
+        for identifier in self.upper_pieces:
+            for from_tile in self.upper_pieces[identifier]:
                 # Cant use sets since multiple identical pieces can exist on the same coordinate
                 slide_moves = [(identifier, from_tile, Move.SLIDE, to_tile) for to_tile in
-                               get_valid_slides(from_tile, board_radius, blocked_coords)]
+                               get_valid_slides(from_tile, self.radius, self.blocked_coords)]
                 swing_moves = [(identifier, from_tile, Move.SWING, to_tile) for to_tile in
-                               get_valid_swings(from_tile, identifier, grid, board_radius, blocked_coords)]
+                               get_valid_swings(from_tile, identifier, self.grid, self.radius, self.blocked_coords)]
                 moves.append((*slide_moves, *swing_moves))
 
-        moved_boards = set()
+        # Calculate all possible sets of moves for upper
         movement_options = itertools.product(*moves)
-        print(list(movement_options))
-        # for moves in movement_options:
-        #     new_grid = copy.deepcopy(grid)
+        mo_list = list(movement_options)
+        print(mo_list)
+        print("trying to print boards")
+        board_set = []
+        for move_set in mo_list:
+            try:
+                new_board = apply_moves(self, move_set)
+                board_set.append(new_board)
+            except:
+                print("applying move failed", file=sys.stderr)
+                sys.exit(1)
+        return board_set
 
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
