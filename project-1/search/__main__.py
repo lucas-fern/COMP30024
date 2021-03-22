@@ -43,6 +43,8 @@ for identifier in all_pieces:
         print('# valid swing moves: ', get_valid_swings(coordinate, identifier, game_board.grid,
                                                         game_board.radius, game_board.blocked_coords))
 
-next_move_states = game_board.generate_token_moves(game_board)
-for board in next_move_states:
-    board.print_grid(compact=True)
+while not game_board.is_game_over():
+    #next_move_states = game_board.generate_token_moves(game_board)\
+    game_board.print_grid(compact=True)
+print("game over")
+game_board.print_grid()

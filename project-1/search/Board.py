@@ -1,5 +1,4 @@
 import numpy as np
-import copy
 import itertools, sys
 from search.util import print_board
 from search.board_util import *
@@ -11,6 +10,7 @@ class Board:
 
     We want to work in centered coordinates wherever possible and only convert to array coordinates for accessing the
     pieces in the board grid."""
+
     def __init__(self, radius=5):
         self.radius = radius
         self.lower_pieces = {'r': [], 'p': [], 's': []}
@@ -40,7 +40,7 @@ class Board:
         return self.grid[item[0], item[1]]
 
     @staticmethod
-    def generate_token_moves(self): #-> list[np.ndarray]:
+    def generate_token_moves(self):  # -> list[np.ndarray]:
         moves = []
         for identifier in self.upper_pieces:
             for from_tile in self.upper_pieces[identifier]:
@@ -54,8 +54,6 @@ class Board:
         # Calculate all possible sets of moves for upper
         movement_options = itertools.product(*moves)
         mo_list = list(movement_options)
-        print(mo_list)
-        print("trying to print boards")
         board_set = []
         for move_set in mo_list:
             try:
@@ -103,3 +101,57 @@ class Board:
         a visual representation of the board state."""
         print_dict = self.grid_to_dict()
         print_board(print_dict, compact=compact)
+
+    def battle(self):
+        # Could be done much more cleanly but works for now, will worry about optimisation later
+        for idx, x in np.ndenumerate(self.grid):
+            if len(x) > 1:
+                #print("battle on", idx, [c.lower() for c in x])
+                # Check for all 3
+                if all(e in [c.lower() for c in x] for e in ['r', 'p', 's']):
+                    for e in x:
+                        try:
+                            self.upper_pieces[e].remove(array_to_centered_coord(idx,self.radius))
+                        except IndexError:
+                            self.lower_pieces[e].remove(array_to_centered_coord(idx, self.radius))
+                    self.grid[idx] = []
+                # Check for individual tokens
+                elif 'r' in [c.lower() for c in x]:
+                    for coord in self.lower_pieces['s']:
+                        if coord == array_to_centered_coord(idx,self.radius):
+                            self.lower_pieces['s'].remove(coord)
+                            self.grid[idx].remove("s")
+                    for coord in self.upper_pieces['S']:
+                        if coord == array_to_centered_coord(idx, self.radius):
+                            self.upper_pieces['S'].remove(coord)
+                            self.grid[idx].remove("S")
+                elif 's' in [c.lower() for c in x]:
+                    for coord in self.lower_pieces['p']:
+                        if coord == array_to_centered_coord(idx,self.radius):
+                            self.lower_pieces['p'].remove(coord)
+                            self.grid[idx].remove("p")
+                    for coord in self.upper_pieces['P']:
+                        if coord == array_to_centered_coord(idx, self.radius):
+                            self.upper_pieces['P'].remove(coord)
+                            self.grid[idx].remove("P")
+                elif 'p' in [c.lower() for c in x]:
+                    for coord in self.lower_pieces['r']:
+                        if coord == array_to_centered_coord(idx,self.radius):
+                            self.lower_pieces['r'].remove(coord)
+                            self.grid[idx].remove("r")
+                    for coord in self.upper_pieces['R']:
+                        if coord == array_to_centered_coord(idx, self.radius):
+                            self.upper_pieces['R'].remove(coord)
+                            self.grid[idx].remove("R")
+
+    def is_game_over(self):
+        self.battle()
+        print(self.lower_pieces, self.upper_pieces)
+        if not bool([a for a in self.lower_pieces.values() if a != []]) or not \
+                bool([a for a in self.upper_pieces.values() if a != []]):
+            return True
+        return False
+
+    def heuristic(self):
+        for token in self.lower_pieces:
+            break
