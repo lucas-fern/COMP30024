@@ -39,8 +39,7 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
-    @staticmethod
-    def generate_token_moves(self):  # -> list[np.ndarray]:
+    def generate_token_moves(self):
         moves = []
         for identifier in self.upper_pieces:
             for from_tile in self.upper_pieces[identifier]:
@@ -52,16 +51,25 @@ class Board:
                 moves.append((*slide_moves, *swing_moves))
 
         # Calculate all possible sets of moves for upper
-        movement_options = itertools.product(*moves)
-        mo_list = list(movement_options)
-        board_set = []
-        for move_set in mo_list:
+        movement_options = list(itertools.product(*moves))
+
+        print(movement_options)
+        print("# Printing boards")
+
+        board_set = []  # If we define Board.__hash__() then we can make this a set to remove duplicates.
+        for move_set in movement_options:
             try:
                 new_board = apply_moves(self, move_set)
                 board_set.append(new_board)
-            except:
-                print("applying move failed", file=sys.stderr)
+            except IndexError:
+                print("Board index out of range.", file=sys.stderr)
+                # Probably shouldn't have any chances to exit() in final code, just continue anyway to get some marks
                 sys.exit(1)
+            except ValueError:
+                print("Piece does not exist at coordinate.", file=sys.stderr)
+                # Ditto above
+                sys.exit(1)
+
         return board_set
 
     def add_piece(self, coordinate: tuple, identifier: str):
@@ -92,7 +100,9 @@ class Board:
         centered_dict = {}
         for row, col in np.ndindex(self.grid.shape):
             if self.grid[row, col]:
-                centered_dict[array_to_centered_coord((row, col), self.radius)] = self.grid[row, col]
+                pieces = self.grid[row, col]
+                string = ''.join([piece if piece else 'Block' for piece in pieces])
+                centered_dict[array_to_centered_coord((row, col), self.radius)] = string
 
         return centered_dict
 

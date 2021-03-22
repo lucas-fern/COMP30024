@@ -48,3 +48,4 @@ while not game_board.is_game_over():
     game_board.print_grid(compact=True)
 print("game over")
 game_board.print_grid()
+
