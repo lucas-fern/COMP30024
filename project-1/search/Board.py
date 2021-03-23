@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
 import sys
+import copy
 from search.util import print_board
 from search.board_util import *
 
@@ -40,7 +41,7 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
-    def generate_token_moves(self):
+    def generate_moved_boards(self):
         moves = []
         for identifier in self.upper_pieces:
             for from_tile in self.upper_pieces[identifier]:
@@ -70,7 +71,7 @@ class Board:
 
         return board_set
 
-    def apply_moves(self, move_set):
+    def apply_moves(self, move_set) -> 'Board':
         """Applies a move set from the output of Board.generate_token_moves(). Moves pieces regardless of whether moves
         are valid. Returns a new board object with the pieces moved."""
         new_board = copy.deepcopy(self)
@@ -123,52 +124,40 @@ class Board:
         print_board(print_dict, compact=compact)
 
     def battle(self):
+        """Kills any overlapping pieces in the board grid according to the rules of RoPaSci360."""
         # Could be done much more cleanly but works for now, will worry about optimisation later
-        for idx, x in np.ndenumerate(self.grid):
-            if len(x) > 1:
-                #print("battle on", idx, [c.lower() for c in x])
-                # Check for all 3
-                if all(e in [c.lower() for c in x] for e in ['r', 'p', 's']):
-                    for e in x:
-                        try:
-                            self.upper_pieces[e].remove(array_to_centered_coord(idx,self.radius))
-                        except IndexError:
-                            self.lower_pieces[e].remove(array_to_centered_coord(idx, self.radius))
+        for idx, pieces in np.ndenumerate(self.grid):
+            if len(pieces) > 1:
+                # print("battle on", idx, [c.lower() for c in x])
+                # Check for existence of all 3 pieces on hex
+                if all(symbols in [piece.lower() for piece in pieces] for symbols in ['r', 'p', 's']):
+                    for piece in pieces:
+                        # I think we need to cover the case where multiple of these pieces exist, so:
+                        while coord := array_to_centered_coord(idx, self.radius) in self.upper_pieces[piece]:
+                            self.upper_pieces[piece].remove(coord)
+                        while coord in self.lower_pieces[piece]:
+                            self.lower_pieces[piece].remove(coord)
+                    # All pieces are killed on the hex
                     self.grid[idx] = []
-                # Check for individual tokens
-                elif 'r' in [c.lower() for c in x]:
-                    for coord in self.lower_pieces['s']:
-                        if coord == array_to_centered_coord(idx,self.radius):
-                            self.lower_pieces['s'].remove(coord)
-                            self.grid[idx].remove("s")
-                    for coord in self.upper_pieces['S']:
-                        if coord == array_to_centered_coord(idx, self.radius):
-                            self.upper_pieces['S'].remove(coord)
-                            self.grid[idx].remove("S")
-                elif 's' in [c.lower() for c in x]:
-                    for coord in self.lower_pieces['p']:
-                        if coord == array_to_centered_coord(idx,self.radius):
-                            self.lower_pieces['p'].remove(coord)
-                            self.grid[idx].remove("p")
-                    for coord in self.upper_pieces['P']:
-                        if coord == array_to_centered_coord(idx, self.radius):
-                            self.upper_pieces['P'].remove(coord)
-                            self.grid[idx].remove("P")
-                elif 'p' in [c.lower() for c in x]:
-                    for coord in self.lower_pieces['r']:
-                        if coord == array_to_centered_coord(idx,self.radius):
-                            self.lower_pieces['r'].remove(coord)
-                            self.grid[idx].remove("r")
-                    for coord in self.upper_pieces['R']:
-                        if coord == array_to_centered_coord(idx, self.radius):
-                            self.upper_pieces['R'].remove(coord)
-                            self.grid[idx].remove("R")
+
+                    continue  # Skip to the next loop iteration if all the pieces in the cell are dead :)
+
+                # Loop over all the killing combinations and kill the relevant tokens if they exist.
+                for killer, killed in (('r', 's'), ('s', 'p'), ('p', 'r')):
+                    if killer in [piece.lower() for piece in pieces]:
+                        while coord := array_to_centered_coord(idx, self.radius) in self.lower_pieces[killed]:
+                            self.lower_pieces[killed].remove(coord)
+                            self.grid[idx].remove(killed)
+                        while coord in self.upper_pieces[killed]:
+                            self.upper_pieces[killed.upper()].remove(coord)
+                            self.grid[idx].remove(killed.upper())
 
     def is_game_over(self):
+        """Checks if the game is over by seeing if either team has lost all of their pieces."""
         self.battle()
         print(self.lower_pieces, self.upper_pieces)
-        if not bool([a for a in self.lower_pieces.values() if a != []]) or not \
-                bool([a for a in self.upper_pieces.values() if a != []]):
+        if not [a for a in self.lower_pieces.values() if a] or not \
+               [a for a in self.upper_pieces.values() if a]:
             return True
         return False
 

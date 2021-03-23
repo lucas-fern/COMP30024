@@ -1,5 +1,4 @@
 from enum import Enum, auto
-import copy
 
 ADJACENT_OFFSETS = ((+1, 0), (+1, -1), (0, -1), (-1, 0), (-1, +1), (0, +1))
 
@@ -97,10 +96,12 @@ def get_adjacent_hexes(centered_coord, board_radius):
 
 
 def get_valid_slides(centered_coord, board_radius, blocked_coords):
+    """Returns a list of coordinates which a given centered coordinate can perform a slide move to."""
     return get_adjacent_hexes(centered_coord, board_radius) - blocked_coords  # - here is set difference
 
 
 def get_valid_swings(centered_coord, identifier, board_grid, board_radius, blocked_coords):
+    """Returns a list of coordinates which a given centered coordinate can perform a swing move to."""
     valid_swings = set()
     for coord in get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius):
         valid_swings |= get_adjacent_hexes(coord, board_radius)
@@ -111,11 +112,13 @@ def get_valid_swings(centered_coord, identifier, board_grid, board_radius, block
 
 
 def get_valid_moves(centered_coord, identifier, board_grid, board_radius, blocked_coords):
+    """Returns the union of valid slide and swing moves for a piece from a board coordinate."""
     return get_valid_swings(centered_coord, identifier, board_grid, board_radius, blocked_coords) | \
-           get_valid_slides(centered_coord, board_radius, blocked_coords)
+        get_valid_slides(centered_coord, board_radius, blocked_coords)
 
 
 def get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius):
+    """Given a token symbol, board, and a coordinate, returns the coordinates adjacent which contain friendly tokens."""
     adjacent_friendlies = set()
     for row, col in get_adjacent_hexes(centered_coord, board_radius):
         array_coord = centered_to_array_coord((row, col), board_radius)
@@ -128,6 +131,7 @@ def get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius
 
 
 def get_team(identifier):
+    """Returns the Team enum for a given identifier / symbol."""
     if identifier.isupper():
         return Team.UPPER
     elif identifier.islower():
