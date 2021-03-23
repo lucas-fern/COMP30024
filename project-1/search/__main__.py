@@ -44,7 +44,7 @@ for identifier in all_pieces:
                                                         game_board.radius, game_board.blocked_coords))
 
 while not game_board.is_game_over():
-    #next_move_states = game_board.generate_token_moves(game_board)\
+    # next_move_states = game_board.generate_token_moves(game_board)\
     game_board.print_grid(compact=True)
 print("game over")
 game_board.print_grid()

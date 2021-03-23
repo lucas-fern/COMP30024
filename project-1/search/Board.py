@@ -1,5 +1,6 @@
 import numpy as np
-import itertools, sys
+import itertools
+import sys
 from search.util import print_board
 from search.board_util import *
 
@@ -51,15 +52,12 @@ class Board:
                 moves.append((*slide_moves, *swing_moves))
 
         # Calculate all possible sets of moves for upper
-        movement_options = list(itertools.product(*moves))
-
-        print(movement_options)
-        print("# Printing boards")
+        movement_options = itertools.product(*moves)
 
         board_set = []  # If we define Board.__hash__() then we can make this a set to remove duplicates.
         for move_set in movement_options:
             try:
-                new_board = apply_moves(self, move_set)
+                new_board = self.apply_moves(move_set)
                 board_set.append(new_board)
             except IndexError:
                 print("Board index out of range.", file=sys.stderr)
@@ -71,6 +69,18 @@ class Board:
                 sys.exit(1)
 
         return board_set
+
+    def apply_moves(self, move_set):
+        """Applies a move set from the output of Board.generate_token_moves(). Moves pieces regardless of whether moves
+        are valid. Returns a new board object with the pieces moved."""
+        new_board = copy.deepcopy(self)
+        for move in move_set:
+            array_coord_from = centered_to_array_coord(move[1], new_board.radius)
+            array_coord_to = centered_to_array_coord(move[3], new_board.radius)
+            new_board.grid[array_coord_from].remove(move[0])
+            new_board.grid[array_coord_to].append(move[0])
+
+        return new_board
 
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
