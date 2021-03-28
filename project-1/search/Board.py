@@ -42,6 +42,7 @@ class Board:
         return self.grid[item[0], item[1]]
 
     def generate_moved_boards(self):
+        """Generates all possible board states that can be reached from a single set of upper moves."""
         moves = []
         for identifier in self.upper_pieces:
             for from_tile in self.upper_pieces[identifier]:
@@ -162,5 +163,29 @@ class Board:
         return False
 
     def heuristic(self):
-        for token in self.lower_pieces:
-            break
+        """Returns the sum of the manhattan distances between each lower piece and their closest opponent killer."""
+        value = 0
+        for symbol, coordinates in self.lower_pieces.items():
+            if not coordinates: continue
+
+            killer_symbol = KILL_RELATIONS[symbol]
+            closest_killer_dist = float('inf')
+            for lower_coord in coordinates:
+                killer_coords = self.upper_pieces[killer_symbol]
+                for killer_coord in killer_coords:
+                    closest_killer_dist = min(closest_killer_dist, manhattan_distance(lower_coord, killer_coord))
+
+                value += closest_killer_dist
+                closest_killer_dist = float('inf')
+
+        if value == float('inf'):
+            raise Exception("Uh oh, looks like we can't kill one of the pieces?")
+
+        return value
+
+    def search(self, depth=0, max_depth=4):
+        victory = False
+        board_queue = self.generate_moved_boards()
+
+        while not victory and depth != max_depth:
+            pass

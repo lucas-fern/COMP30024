@@ -2,6 +2,8 @@ from enum import Enum, auto
 
 ADJACENT_OFFSETS = ((+1, 0), (+1, -1), (0, -1), (-1, 0), (-1, +1), (0, +1))
 
+KILL_RELATIONS = {'r': 'p', 'p': 's', 's': 'r'}
+
 
 class Team(Enum):
     UPPER = auto()
@@ -108,13 +110,13 @@ def get_valid_swings(centered_coord, identifier, board_grid, board_radius, block
 
     # Valid swings are any hex adjacent to an adjacent friendly which isn't blocked, slideable, or current.
     return valid_swings - blocked_coords - get_valid_slides(centered_coord, board_radius, blocked_coords) \
-        - {centered_coord}
+           - {centered_coord}
 
 
 def get_valid_moves(centered_coord, identifier, board_grid, board_radius, blocked_coords):
     """Returns the union of valid slide and swing moves for a piece from a board coordinate."""
     return get_valid_swings(centered_coord, identifier, board_grid, board_radius, blocked_coords) | \
-        get_valid_slides(centered_coord, board_radius, blocked_coords)
+           get_valid_slides(centered_coord, board_radius, blocked_coords)
 
 
 def get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius):
@@ -138,3 +140,16 @@ def get_team(identifier):
         return Team.LOWER
     else:
         return Team.BLOCK
+
+
+def manhattan_distance(a, b):
+    if length := len(a) != len(b):
+        raise Exception('Mismatched vector dimensions for distance calculation.')
+
+    distance = 0
+
+    for i in range(length):
+        distance += abs(a[i] - b[i])
+
+    return distance
+
