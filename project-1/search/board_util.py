@@ -92,9 +92,15 @@ def get_adjacent_hexes(centered_coord, board_radius):
     # Sums the row and column coordinates with the offsets and forms them into a coordinate tuple
     adjacent_hexes = [(sum(i[0]), sum(i[1])) for i in zipped_pairs]
     # Keeps only the coordinates which are on the board
-    adjacent_hexes = [i for i in adjacent_hexes if -board_radius < sum(i) < board_radius]
+    adjacent_hexes = [i for i in adjacent_hexes if valid_centered_hex(i, board_radius)]
 
     return set(adjacent_hexes)
+
+
+def valid_centered_hex(centered_coord, board_radius):
+    return -board_radius < sum(centered_coord) < board_radius and \
+           -board_radius < centered_coord[0] < board_radius and \
+           -board_radius < centered_coord[1] < board_radius
 
 
 def get_valid_slides(centered_coord, board_radius, blocked_coords):
@@ -110,7 +116,7 @@ def get_valid_swings(centered_coord, identifier, board_grid, board_radius, block
 
     # Valid swings are any hex adjacent to an adjacent friendly which isn't blocked, slideable, or current.
     return valid_swings - blocked_coords - get_valid_slides(centered_coord, board_radius, blocked_coords) \
-           - {centered_coord}
+        - {centered_coord}
 
 
 def get_valid_moves(centered_coord, identifier, board_grid, board_radius, blocked_coords):
@@ -143,7 +149,7 @@ def get_team(identifier):
 
 
 def manhattan_distance(a, b):
-    if length := len(a) != len(b):
+    if (length := len(a)) != len(b):
         raise Exception('Mismatched vector dimensions for distance calculation.')
 
     distance = 0

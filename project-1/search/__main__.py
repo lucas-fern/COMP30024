@@ -8,6 +8,7 @@ This script contains the entry point to the program (the code in
 
 import sys
 import json
+import random
 
 # If you want to separate your code into separate files, put them
 # inside the `search` directory (like this one and `util.py`) and
@@ -32,6 +33,7 @@ game_board.print_grid()
 # game_board.upper_pieces | game_board.lower_pieces, but I don't know if that's what you're using, and I doubt its
 # what the assessment server will be using.
 all_pieces = {**game_board.upper_pieces, **game_board.lower_pieces}
+
 for identifier in all_pieces:
     coordinates = all_pieces[identifier]
     for coordinate in coordinates:
@@ -44,8 +46,9 @@ for identifier in all_pieces:
                                                         game_board.radius, game_board.blocked_coords))
 
 while not game_board.is_game_over():
-    # next_move_states = game_board.generate_token_moves(game_board)\
+    print(game_board.heuristic())
+    game_board = random.choice(game_board.generate_moved_boards())
     game_board.print_grid(compact=True)
-print("game over")
+
 game_board.print_grid()
 

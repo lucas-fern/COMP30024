@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import traceback
 import sys
 import copy
 from search.util import print_board
@@ -67,6 +68,7 @@ class Board:
                 sys.exit(1)
             except ValueError:
                 print("Piece does not exist at coordinate.", file=sys.stderr)
+                print(traceback.format_exc())
                 # Ditto above
                 sys.exit(1)
 
@@ -76,17 +78,21 @@ class Board:
         """Applies a move set from the output of Board.generate_token_moves(). Moves pieces regardless of whether moves
         are valid. Returns a new board object with the pieces moved."""
         new_board = copy.deepcopy(self)
-        for move in move_set:
-            array_coord_from = centered_to_array_coord(move[1], new_board.radius)
-            array_coord_to = centered_to_array_coord(move[3], new_board.radius)
-            new_board.grid[array_coord_from].remove(move[0])
-            new_board.grid[array_coord_to].append(move[0])
+        for symbol, from_coord, move_type, to_coord in move_set:
+            array_coord_from = centered_to_array_coord(from_coord, new_board.radius)
+            array_coord_to = centered_to_array_coord(to_coord, new_board.radius)
+
+            new_board.grid[array_coord_from].remove(symbol)
+            new_board.grid[array_coord_to].append(symbol)
+
+            new_board.upper_pieces[symbol].remove(from_coord)
+            new_board.upper_pieces[symbol].append(to_coord)
 
         return new_board
 
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
-        if -self.radius < sum(coordinate) < self.radius:  # Valid positions on the board follow this rule!
+        if valid_centered_hex(coordinate, self.radius):
             array_coord = centered_to_array_coord(coordinate, self.radius)
             # self passes in a reference to this game board to be stored by the Piece
             self.grid[array_coord].append(identifier)
@@ -134,7 +140,7 @@ class Board:
                 if all(symbols in [piece.lower() for piece in pieces] for symbols in ['r', 'p', 's']):
                     for piece in pieces:
                         # I think we need to cover the case where multiple of these pieces exist, so:
-                        while coord := array_to_centered_coord(idx, self.radius) in self.upper_pieces[piece]:
+                        while coord := array_to_centered_coord(idx, self.radius) in self.upper_pieces[piece.upper()]:
                             self.upper_pieces[piece].remove(coord)
                         while coord in self.lower_pieces[piece]:
                             self.lower_pieces[piece].remove(coord)
@@ -146,19 +152,19 @@ class Board:
                 # Loop over all the killing combinations and kill the relevant tokens if they exist.
                 for killer, killed in (('r', 's'), ('s', 'p'), ('p', 'r')):
                     if killer in [piece.lower() for piece in pieces]:
-                        while coord := array_to_centered_coord(idx, self.radius) in self.lower_pieces[killed]:
+                        while (coord := array_to_centered_coord(idx, self.radius)) in self.lower_pieces[killed]:
                             self.lower_pieces[killed].remove(coord)
                             self.grid[idx].remove(killed)
-                        while coord in self.upper_pieces[killed]:
+                        while coord in self.upper_pieces[killed.upper()]:
                             self.upper_pieces[killed.upper()].remove(coord)
                             self.grid[idx].remove(killed.upper())
 
     def is_game_over(self):
         """Checks if the game is over by seeing if either team has lost all of their pieces."""
         self.battle()
-        print(self.lower_pieces, self.upper_pieces)
         if not [a for a in self.lower_pieces.values() if a] or not \
                [a for a in self.upper_pieces.values() if a]:
+            print('# Victory Royale!')
             return True
         return False
 
@@ -166,12 +172,13 @@ class Board:
         """Returns the sum of the manhattan distances between each lower piece and their closest opponent killer."""
         value = 0
         for symbol, coordinates in self.lower_pieces.items():
-            if not coordinates: continue
+            if not coordinates:
+                continue
 
             killer_symbol = KILL_RELATIONS[symbol]
             closest_killer_dist = float('inf')
             for lower_coord in coordinates:
-                killer_coords = self.upper_pieces[killer_symbol]
+                killer_coords = self.upper_pieces[killer_symbol.upper()]
                 for killer_coord in killer_coords:
                     closest_killer_dist = min(closest_killer_dist, manhattan_distance(lower_coord, killer_coord))
 
@@ -179,7 +186,7 @@ class Board:
                 closest_killer_dist = float('inf')
 
         if value == float('inf'):
-            raise Exception("Uh oh, looks like we can't kill one of the pieces?")
+            raise Exception("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)")
 
         return value
 
