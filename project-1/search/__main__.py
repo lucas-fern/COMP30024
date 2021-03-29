@@ -12,7 +12,7 @@ import json
 # If you want to separate your code into separate files, put them
 # inside the `search` directory (like this one and `util.py`) and
 # then import from them like this:
-from search.util import print_board, print_slide, print_swing
+from search.util import print_slide, print_swing
 from search.Board import Board
 from search.board_util import *
 
