@@ -206,8 +206,7 @@ class Board:
             for lower_coord in coordinates:
                 killer_coords = self.upper_pieces[killer_symbol.upper()]
                 for killer_coord in killer_coords:
-                    closest_killer_dist = min(closest_killer_dist, manhattan_distance(lower_coord, killer_coord))
-
+                    closest_killer_dist = min(closest_killer_dist, manhattan_distance_cube(lower_coord, killer_coord))
                 self.heuristic_score += closest_killer_dist
                 closest_killer_dist = float('inf')
 

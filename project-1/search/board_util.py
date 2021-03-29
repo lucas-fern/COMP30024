@@ -63,6 +63,11 @@ def centered_to_array_coord(centered_coord: tuple, board_radius) -> tuple:
     return -translated[0], translated[1]  # Element wise sum of the coordinate and offset
 
 
+def centered_to_cube_coord(centered_coord: tuple) -> tuple:
+    """Converts centered coords to cubic notation for use in manhattan distance calculation"""
+    return (centered_coord[0],centered_coord[1],0-centered_coord[0]-centered_coord[1])
+
+
 def array_to_centered_coord(array_coord: tuple, board_radius) -> tuple:
     """Performs the inverse transformation to centered_to_array_coord(). Transforms coordinates from the array
     coordinate system to centered axial coordinates."""
@@ -152,3 +157,15 @@ def manhattan_distance(a, b):
         distance += abs(a[i] - b[i])
 
     return distance
+
+def manhattan_distance_cube(a, b):
+    a, b = centered_to_cube_coord(a), centered_to_cube_coord(b)
+    length_a = len(a)
+    if length_a != len(b):
+        raise Exception('Mismatched vector dimensions for distance calculation.')
+    distance = 0
+
+    for i in range(length_a):
+        distance += abs(a[i] - b[i])
+
+    return distance/2
