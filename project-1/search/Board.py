@@ -156,10 +156,10 @@ class Board:
                 if all(symbols in [piece.lower() for piece in pieces] for symbols in ['r', 'p', 's']):
                     for piece in pieces:
                         # I think we need to cover the case where multiple of these pieces exist, so:
-                        while coord := array_to_centered_coord(idx, self.radius) in self.upper_pieces[piece.upper()]:
-                            self.upper_pieces[piece].remove(coord)
-                        while coord in self.lower_pieces[piece]:
-                            self.lower_pieces[piece].remove(coord)
+                        while (coord := array_to_centered_coord(idx, self.radius)) in self.upper_pieces[piece.upper()]:
+                            self.upper_pieces[piece.upper()].remove(coord)
+                        while coord in self.lower_pieces[piece.lower()]:
+                            self.lower_pieces[piece.lower()].remove(coord)
                     # All pieces are killed on the hex
                     self.grid[idx] = []
 
