@@ -206,7 +206,7 @@ class Board:
         if self.heuristic_score == float('inf'):
             print("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)", file=sys.stderr)
 
-    def search(self, depth=0, max_depth=2, current_best=None):
+    def search(self, depth=0, max_depth=4, current_best=None):
         # Base case 1; Game is over at this board
         if self.is_game_over():
             return self

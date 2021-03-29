@@ -11,13 +11,6 @@ class Team(Enum):
     BLOCK = None
 
 
-class Symbol(Enum):
-    ROCK = 'R'
-    PAPER = 'P'
-    SCISSORS = 'S'
-    BLOCK = 'B'
-
-
 class Move(Enum):
     SLIDE = auto()
     SWING = auto()
