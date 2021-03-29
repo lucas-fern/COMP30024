@@ -149,13 +149,13 @@ def get_team(identifier):
 
 
 def manhattan_distance(a, b):
-    if (length := len(a)) != len(b):
+    length_a = len(a)
+    if length_a != len(b):
         raise Exception('Mismatched vector dimensions for distance calculation.')
 
     distance = 0
 
-    for i in range(length):
+    for i in range(length_a):
         distance += abs(a[i] - b[i])
 
     return distance
-

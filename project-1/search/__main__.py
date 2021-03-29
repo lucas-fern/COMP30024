@@ -8,7 +8,6 @@ This script contains the entry point to the program (the code in
 
 import sys
 import json
-import random
 
 # If you want to separate your code into separate files, put them
 # inside the `search` directory (like this one and `util.py`) and

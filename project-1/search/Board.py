@@ -156,7 +156,8 @@ class Board:
                 if all(symbols in [piece.lower() for piece in pieces] for symbols in ['r', 'p', 's']):
                     for piece in pieces:
                         # I think we need to cover the case where multiple of these pieces exist, so:
-                        while (coord := array_to_centered_coord(idx, self.radius)) in self.upper_pieces[piece.upper()]:
+                        coord = array_to_centered_coord(idx, self.radius)
+                        while coord in self.upper_pieces[piece.upper()]:
                             self.upper_pieces[piece.upper()].remove(coord)
                         while coord in self.lower_pieces[piece.lower()]:
                             self.lower_pieces[piece.lower()].remove(coord)
@@ -168,7 +169,8 @@ class Board:
                 # Loop over all the killing combinations and kill the relevant tokens if they exist.
                 for killer, killed in (('r', 's'), ('s', 'p'), ('p', 'r')):
                     if killer in [piece.lower() for piece in pieces]:
-                        while (coord := array_to_centered_coord(idx, self.radius)) in self.lower_pieces[killed]:
+                        coord = array_to_centered_coord(idx, self.radius)
+                        while coord in self.lower_pieces[killed]:
                             self.lower_pieces[killed].remove(coord)
                             self.grid[idx].remove(killed)
                         while coord in self.upper_pieces[killed.upper()]:
@@ -233,4 +235,3 @@ class Board:
                                key=lambda board: board.heuristic_score)
 
         return current_best
-
