@@ -46,10 +46,9 @@ for identifier in all_pieces:
                                                         game_board.radius, game_board.blocked_coords))
 
 while not game_board.is_game_over():
-    game_board.generate_children()
-    game_board = random.choice(game_board.children)
+    game_board = game_board.search()
     game_board.print_grid(compact=True)
-    print('# ^ Heuristic:', game_board.heuristic())
+    print('# ^ Heuristic:', game_board.heuristic_score)
 
 game_board.print_grid()
 

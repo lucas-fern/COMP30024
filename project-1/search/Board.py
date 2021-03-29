@@ -89,6 +89,7 @@ class Board:
             new_board.upper_pieces[symbol].append(to_coord)
 
         new_board.battle()  # Lets remove the dead pieces here so we aren't passing around half-completed moves
+        new_board.set_heuristic()
         return new_board
 
     def spawn_offspring(self) -> 'Board':
@@ -125,6 +126,7 @@ class Board:
             self.add_piece((piece[1], piece[2]), piece[0].upper())
         for piece in [*initial_dict['lower'], *initial_dict['block']]:  # Unpack and combine the two piece lists
             self.add_piece((piece[1], piece[2]), piece[0])
+        self.set_heuristic()
 
     def grid_to_dict(self) -> dict:
         """Converts the board grid to a dictionary of coordinate: piece(s) pairs. The dictionary is compatible with
@@ -181,9 +183,10 @@ class Board:
             return True
         return False
 
-    def heuristic(self):
-        """Returns the sum of the manhattan distances between each lower piece and their closest opponent killer."""
-        value = 0
+    def set_heuristic(self):
+        """Sets the heuristic as the sum of the manhattan distances between each lower piece and their closest opponent
+        killer."""
+        self.heuristic_score = 0
         for symbol, coordinates in self.lower_pieces.items():
             if not coordinates:
                 continue
@@ -195,17 +198,39 @@ class Board:
                 for killer_coord in killer_coords:
                     closest_killer_dist = min(closest_killer_dist, manhattan_distance(lower_coord, killer_coord))
 
-                value += closest_killer_dist
+                self.heuristic_score += closest_killer_dist
                 closest_killer_dist = float('inf')
 
-        if value == float('inf'):
-            raise Exception("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)")
+        if self.heuristic_score == float('inf'):
+            print("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)", file=sys.stderr)
 
-        return value
+    def search(self, depth=0, max_depth=2, current_best=None):
+        # Base case 1; Game is over at this board
+        if self.is_game_over():
+            return self
 
-    def search(self, depth=0, max_depth=4):
-        victory = False
+        # Base case 2; We have reached the max depth in the tree
+        if current_best is None:
+            current_best = self
+        else:
+            # Sets to the board with the lowest heuristic score between the current best and the calling board.
+            current_best = min(current_best, self, key=lambda board: board.heuristic_score)
 
+        # current_best.print_grid(compact=True)
+        print(current_best.heuristic_score)
+
+        if depth == max_depth:
+            return current_best
+        # End base cases
+
+        # Recursive case; have to search for the best game state among the remaining search layers
         self.generate_children()
-        while not victory and depth != max_depth:
-            pass
+        self.children.sort(key=lambda x: x.heuristic_score)
+        self.children = [i for i in self.children if i.heuristic_score <= self.heuristic_score]
+        for child in self.children:
+            current_best = min(current_best,
+                               child.search(depth=depth+1, max_depth=max_depth, current_best=current_best),
+                               key=lambda board: board.heuristic_score)
+
+        return current_best
+
