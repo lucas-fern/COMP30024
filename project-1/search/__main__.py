@@ -46,9 +46,10 @@ for identifier in all_pieces:
                                                         game_board.radius, game_board.blocked_coords))
 
 while not game_board.is_game_over():
-    print(game_board.heuristic())
-    game_board = random.choice(game_board.generate_moved_boards())
+    game_board.generate_children()
+    game_board = random.choice(game_board.children)
     game_board.print_grid(compact=True)
+    print('# ^ Heuristic:', game_board.heuristic())
 
 game_board.print_grid()
 

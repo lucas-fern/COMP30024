@@ -19,6 +19,8 @@ class Board:
         self.lower_pieces = {'r': [], 'p': [], 's': []}
         self.upper_pieces = {'R': [], 'P': [], 'S': []}
         self.blocked_coords = set()
+        self.heuristic_score = None
+        self.children = None
 
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -42,8 +44,8 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
-    def generate_moved_boards(self):
-        """Generates all possible board states that can be reached from a single set of upper moves."""
+    def generate_children(self):
+        """Generates all possible board states that can be reached from a single set of upper moves. Adds to children"""
         moves = []
         for identifier in self.upper_pieces:
             for from_tile in self.upper_pieces[identifier]:
@@ -57,11 +59,11 @@ class Board:
         # Calculate all possible sets of moves for upper
         movement_options = itertools.product(*moves)
 
-        board_set = []  # If we define Board.__hash__() then we can make this a set to remove duplicates.
+        self.children = []  # If we define Board.__hash__() then we can make this a set to remove duplicates.
         for move_set in movement_options:
             try:
                 new_board = self.apply_moves(move_set)
-                board_set.append(new_board)
+                self.children.append(new_board)
             except IndexError:
                 print("Board index out of range.", file=sys.stderr)
                 # Probably shouldn't have any chances to exit() in final code, just continue anyway to get some marks
@@ -72,12 +74,10 @@ class Board:
                 # Ditto above
                 sys.exit(1)
 
-        return board_set
-
     def apply_moves(self, move_set) -> 'Board':
         """Applies a move set from the output of Board.generate_token_moves(). Moves pieces regardless of whether moves
         are valid. Returns a new board object with the pieces moved."""
-        new_board = copy.deepcopy(self)
+        new_board = self.spawn_offspring()
         for symbol, from_coord, move_type, to_coord in move_set:
             array_coord_from = centered_to_array_coord(from_coord, new_board.radius)
             array_coord_to = centered_to_array_coord(to_coord, new_board.radius)
@@ -88,7 +88,21 @@ class Board:
             new_board.upper_pieces[symbol].remove(from_coord)
             new_board.upper_pieces[symbol].append(to_coord)
 
+        new_board.battle()  # Lets remove the dead pieces here so we aren't passing around half-completed moves
         return new_board
+
+    def spawn_offspring(self) -> 'Board':
+        """Creates a child board without any children of its own and no heuristic score."""
+        offspring = Board(self.radius)
+        offspring.upper_pieces = copy.deepcopy(self.upper_pieces)
+        offspring.lower_pieces = copy.deepcopy(self.lower_pieces)
+        offspring.blocked_coords = copy.deepcopy(self.blocked_coords)
+        offspring.grid = copy.deepcopy(self.grid)
+
+        offspring.heuristic_score = None
+        offspring.children = []
+
+        return offspring
 
     def add_piece(self, coordinate: tuple, identifier: str):
         """Adds a piece to the board grid, takes a centered coordinate and an identifier string for the piece."""
@@ -161,7 +175,6 @@ class Board:
 
     def is_game_over(self):
         """Checks if the game is over by seeing if either team has lost all of their pieces."""
-        self.battle()
         if not [a for a in self.lower_pieces.values() if a] or not \
                [a for a in self.upper_pieces.values() if a]:
             print('# Victory Royale!')
@@ -192,7 +205,7 @@ class Board:
 
     def search(self, depth=0, max_depth=4):
         victory = False
-        board_queue = self.generate_moved_boards()
 
+        self.generate_children()
         while not victory and depth != max_depth:
             pass
