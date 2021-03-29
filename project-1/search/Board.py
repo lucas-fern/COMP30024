@@ -21,6 +21,8 @@ class Board:
         self.blocked_coords = set()
         self.heuristic_score = None
         self.children = None
+        self.f = 0
+        self.g = 0
 
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -204,7 +206,8 @@ class Board:
                 closest_killer_dist = float('inf')
 
         if self.heuristic_score == float('inf'):
-            print("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)", file=sys.stderr)
+            pass
+            #print("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)", file=sys.stderr)
 
     def search(self, depth=0, max_depth=4, current_best=None):
         # Base case 1; Game is over at this board

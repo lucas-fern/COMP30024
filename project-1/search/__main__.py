@@ -44,10 +44,47 @@ for identifier in all_pieces:
         print('# valid swing moves: ', get_valid_swings(coordinate, identifier, game_board.grid,
                                                         game_board.radius, game_board.blocked_coords))
 
-while not game_board.is_game_over():
-    game_board = game_board.search()
-    game_board.print_grid(compact=True)
-    print('# ^ Heuristic:', game_board.heuristic_score)
+# A* algo
 
-game_board.print_grid()
+open_list = []
+closed_list = []
+open_list.append(game_board)
+
+while len(open_list) > 0:
+    current_node = open_list[0]
+    current_index = 0
+    # expand, preffering nodes with lowver combined heuristic scores
+    for index, item in enumerate(open_list):
+        if item.f < current_node.f:
+            current_node = item
+            current_index = index
+    open_list.pop(current_index)
+    closed_list.append(current_node)
+
+    if current_node.is_game_over():
+        print("Woo found winning set of moves")
+        break
+
+    current_node.generate_children()
+    for child in current_node.children:
+        for closed_child in closed_list:
+            if child == closed_child:
+                continue
+        child.g = current_node.g + 1
+        child.set_heuristic
+        child.f = child.g + child.heuristic_score
+
+        for open_node in open_list:
+            if child == open_node and child.g > open_node.g:
+                continue
+
+        open_list.append(child)
+
+
+    #game_board = game_board.search()
+    #game_board.print_grid(compact=True)
+    #print('# ^ Heuristic:', game_board.heuristic_score)
+
+
+current_node.print_grid()
 
