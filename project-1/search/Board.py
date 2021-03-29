@@ -23,6 +23,8 @@ class Board:
         self.children = None
         self.f = 0
         self.g = 0
+        self.connecting_move_set = None
+        self.parent = None
 
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -92,6 +94,8 @@ class Board:
 
         new_board.battle()  # Lets remove the dead pieces here so we aren't passing around half-completed moves
         new_board.set_heuristic()
+        new_board.connecting_move_set = move_set
+        new_board.parent = self
         return new_board
 
     def spawn_offspring(self) -> 'Board':

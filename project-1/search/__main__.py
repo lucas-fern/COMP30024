@@ -80,11 +80,13 @@ while len(open_list) > 0:
 
         open_list.append(child)
 
-
-    #game_board = game_board.search()
-    #game_board.print_grid(compact=True)
-    #print('# ^ Heuristic:', game_board.heuristic_score)
-
+path = []
+current = current_node
+while current is not None:
+    path.append(current.connecting_move_set)
+    current.print_grid(compact=True)
+    current = current.parent
+print(path[::-1]) # Return reversed path
 
 current_node.print_grid()
 
