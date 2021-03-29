@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import random
 import traceback
 import sys
 import copy
@@ -200,15 +201,16 @@ class Board:
         for symbol, coordinates in self.lower_pieces.items():
             if not coordinates:
                 continue
-
             killer_symbol = KILL_RELATIONS[symbol]
             closest_killer_dist = float('inf')
             for lower_coord in coordinates:
                 killer_coords = self.upper_pieces[killer_symbol.upper()]
                 for killer_coord in killer_coords:
                     closest_killer_dist = min(closest_killer_dist, manhattan_distance_cube(lower_coord, killer_coord))
-                self.heuristic_score += closest_killer_dist
+                # it is important to break ties between two equidistant targets, so random noise is added.
+                self.heuristic_score += closest_killer_dist + random.uniform(0,0.01)
                 closest_killer_dist = float('inf')
 
         if self.heuristic_score == float('inf'):
             pass
+        #print("Heuristic based on", i, "lower tokens")
