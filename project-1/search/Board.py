@@ -190,7 +190,6 @@ class Board:
         """Checks if the game is over by seeing if either team has lost all of their pieces."""
         if not [a for a in self.lower_pieces.values() if a] or not \
                [a for a in self.upper_pieces.values() if a]:
-            print('# Victory Royale!')
             return True
         return False
 
@@ -214,34 +213,3 @@ class Board:
 
         if self.heuristic_score == float('inf'):
             pass
-            #print("Uh oh, looks like we can't kill one of the pieces (must've killed ourself)", file=sys.stderr)
-
-    def search(self, depth=0, max_depth=4, current_best=None):
-        # Base case 1; Game is over at this board
-        if self.is_game_over():
-            return self
-
-        # Base case 2; We have reached the max depth in the tree
-        if current_best is None:
-            current_best = self
-        else:
-            # Sets to the board with the lowest heuristic score between the current best and the calling board.
-            current_best = min(current_best, self, key=lambda board: board.heuristic_score)
-
-        # current_best.print_grid(compact=True)
-        print(current_best.heuristic_score)
-
-        if depth == max_depth:
-            return current_best
-        # End base cases
-
-        # Recursive case; have to search for the best game state among the remaining search layers
-        self.generate_children()
-        self.children.sort(key=lambda x: x.heuristic_score)
-        self.children = [i for i in self.children if i.heuristic_score <= self.heuristic_score]
-        for child in self.children:
-            current_best = min(current_best,
-                               child.search(depth=depth+1, max_depth=max_depth, current_best=current_best),
-                               key=lambda board: board.heuristic_score)
-
-        return current_best
