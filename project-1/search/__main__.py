@@ -28,65 +28,63 @@ game_board = Board(radius=5)
 game_board.populate_grid(data)
 game_board.print_grid()
 
-# {**game_board.upper_pieces, **game_board.lower_pieces} is a merge of the two dictionaries, in python 3.9 we can use
-# game_board.upper_pieces | game_board.lower_pieces, but I don't know if that's what you're using, and I doubt its
-# what the assessment server will be using.
-all_pieces = {**game_board.upper_pieces, **game_board.lower_pieces}
-
-for identifier in all_pieces:
-    coordinates = all_pieces[identifier]
-    for coordinate in coordinates:
-        print('#', identifier, coordinate)
-        print('# adjacent hexes: ', get_adjacent_hexes(coordinate, game_board.radius))
-        print('# valid slide moves: ', get_valid_slides(coordinate, game_board.radius, game_board.blocked_coords))
-        print('# adjacent friendly hexes: ', get_adjacent_friendlies(coordinate, identifier, game_board.grid,
-                                                                     game_board.radius))
-        print('# valid swing moves: ', get_valid_swings(coordinate, identifier, game_board.grid,
-                                                        game_board.radius, game_board.blocked_coords))
-
-# A* algo
+# A* Algorithm
 
 open_list = []
 closed_list = []
 open_list.append(game_board)
+current_node = None
 
 while len(open_list) > 0:
     current_node = open_list[0]
-    current_index = 0
-    # expand, preffering nodes with lowver combined heuristic scores
-    for index, item in enumerate(open_list):
-        if item.f < current_node.f:
-            current_node = item
-            current_index = index
-    open_list.pop(current_index)
+    # Explore the open board with the lowest heuristic score
+    for open_board in open_list:
+        if open_board.f < current_node.f:
+            current_node = open_board
+    open_list.remove(current_node)
     closed_list.append(current_node)
 
     if current_node.is_game_over():
-        print("Woo found winning set of moves")
+        print("# Woo found winning set of moves!")
         break
 
+    # Add children of the current node to the list of nodes to be explored
     current_node.generate_children()
     for child in current_node.children:
+        is_closed = False
         for closed_child in closed_list:
+            # If the child has already been closed, set a flag to skip the outer loop, then break the inner loop
             if child == closed_child:
-                continue
+                is_closed = True
+                break
+        if is_closed:
+            continue
+
+        # The child isn't closed yet, so generate g(n) and f(n) = g(n) + heuristic(n)
         child.g = current_node.g + 1
-        child.set_heuristic
         child.f = child.g + child.heuristic_score
 
+        # If the child is already in the open set, and that version has a lower g(n) cost, don't add this one.
+        superior_is_open = False
         for open_node in open_list:
-            if child == open_node and child.g > open_node.g:
-                continue
+            if child == open_node:
+                if child.g > open_node.g:
+                    superior_is_open = True
+                    break
+                else:
+                    open_list.remove(open_node)
+        if superior_is_open:
+            continue
 
         open_list.append(child)
 
 path = []
-current = current_node
-while current is not None:
-    path.append(current.connecting_move_set)
-    current.print_grid(compact=True)
-    current = current.parent
-print(path[::-1]) # Return reversed path
+while current_node is not None:
+    path.append(current_node.connecting_move_set)
+    current_node.print_grid()
+    current = current_node.parent
+# Print the path, in reverse order, starting with the second last element (because the root node is an orphan)
+print(path[-2::-1])
 
 current_node.print_grid()
 

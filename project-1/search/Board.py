@@ -190,7 +190,6 @@ class Board:
         """Checks if the game is over by seeing if either team has lost all of their pieces."""
         if not [a for a in self.lower_pieces.values() if a] or not \
                [a for a in self.upper_pieces.values() if a]:
-            print('# Victory Royale!')
             return True
         return False
 
