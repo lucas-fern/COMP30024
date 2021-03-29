@@ -48,6 +48,9 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
+    def __eq__(self, other):
+        return np.array_equal(self.grid, other.grid)
+
     def generate_children(self):
         """Generates all possible board states that can be reached from a single set of upper moves. Adds to children"""
         moves = []
