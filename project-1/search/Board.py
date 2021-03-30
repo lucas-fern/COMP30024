@@ -208,21 +208,23 @@ class Board:
         return False
 
     def set_heuristic(self):
-        """Sets the heuristic as the sum of the manhattan distances between each lower piece and their closest opponent
-        killer."""
+        """Sets the heuristic as the sum of the BFS distances between all lower piece and their
+        closest opponent killer."""
         self.heuristic_score = 0
         for symbol, coordinates in self.lower_pieces.items():
             if not coordinates:
                 continue
+
             killer_symbol = KILL_RELATIONS[symbol]
-            closest_killer_dist = float('inf')
             for lower_coord in coordinates:
+                closest_killer_dist = float('inf')
                 killer_coords = self.upper_pieces[killer_symbol.upper()]
                 for killer_coord in killer_coords:
-                    closest_killer_dist = min(closest_killer_dist, manhattan_distance_cube(lower_coord, killer_coord))
+                    closest_killer_dist = min(closest_killer_dist, self.bfs_distance(lower_coord, killer_coord))
                 # it is important to break ties between two equidistant targets, so random noise is added.
-                self.heuristic_score += closest_killer_dist + random.uniform(0, 0.001)
-                closest_killer_dist = float('inf')
+                self.heuristic_score += closest_killer_dist
+
+        self.heuristic_score += random.uniform(0, 0.001)
 
     def bfs_distance(self, a, b):
         """Uses BFS to return the distance between two coordinates around any obstacles. Algorithm adapted from
@@ -234,7 +236,7 @@ class Board:
         current = None
 
         while frontier:
-            current = frontier.pop()
+            current = frontier.pop(0)
 
             if current == b:
                 break

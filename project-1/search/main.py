@@ -41,9 +41,9 @@ def main(data=None):
         open_set.remove(current_node)
         closed_set.add(current_node)
 
-        print(len(open_set), len(open_heap), len(closed_set))
+        # print(len(open_set), len(open_heap), len(closed_set))
 
-        current_node.print_grid()
+        # current_node.print_grid()
         if current_node.is_game_over():
             break
 
@@ -72,7 +72,6 @@ def main(data=None):
     path = []
     while current_node is not None:
         path.append(current_node.connecting_move_set)
-        #current_node.print_grid(compact=True)
         current_node = current_node.parent
 
     # Print the path, in reverse order, starting with the second last element (because the root node is an orphan)
