@@ -211,6 +211,7 @@ class Board:
         """Sets the heuristic as the sum of the manhattan distances between each lower piece and their closest opponent
         killer."""
         self.heuristic_score = 0
+        i = 0
         for symbol, coordinates in self.lower_pieces.items():
             if not coordinates:
                 continue
@@ -221,9 +222,11 @@ class Board:
                 for killer_coord in killer_coords:
                     closest_killer_dist = min(closest_killer_dist, manhattan_distance_cube(lower_coord, killer_coord))
                 # it is important to break ties between two equidistant targets, so random noise is added.
-                self.heuristic_score += closest_killer_dist + random.uniform(0, 0.01)
+                self.heuristic_score += closest_killer_dist + random.uniform(0,0.001) # - random.uniform(0,0.001) for admissibility
+                i += 1
                 closest_killer_dist = float('inf')
 
-        if self.heuristic_score == float('inf'):
-            pass
-        #print("Heuristic based on", i, "lower tokens")
+        # Average
+        #try:
+        #    self.heuristic_score = self.heuristic_score/i
+        #except: ZeroDivisionError
