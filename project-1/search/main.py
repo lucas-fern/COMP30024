@@ -87,6 +87,7 @@ def main(data=None):
     path = []
     while current_node is not None:
         path.append(current_node.connecting_move_set)
+        #current_node.print_grid(compact=True)
         current_node = current_node.parent
 
     # Print the path, in reverse order, starting with the second last element (because the root node is an orphan)
