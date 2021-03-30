@@ -49,8 +49,21 @@ class Board:
         """
         return self.grid[item[0], item[1]]
 
+    def __lt__(self, other):
+        """The less than comparison is used when sorting items in the priority queue"""
+        return self.f < other.f
+
     def __eq__(self, other):
         return np.array_equal(self.grid, other.grid)
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __str__(self):
+        string = ''
+        for ix, iy in np.ndindex(self.grid.shape):
+            string += str(sorted(self.grid[ix, iy]))
+        return string
 
     def generate_children(self):
         """Generates all possible board states that can be reached from a single set of upper moves. Adds to children"""
@@ -208,7 +221,7 @@ class Board:
                 for killer_coord in killer_coords:
                     closest_killer_dist = min(closest_killer_dist, manhattan_distance_cube(lower_coord, killer_coord))
                 # it is important to break ties between two equidistant targets, so random noise is added.
-                self.heuristic_score += closest_killer_dist + random.uniform(0,0.01)
+                self.heuristic_score += closest_killer_dist + random.uniform(0, 0.01)
                 closest_killer_dist = float('inf')
 
         if self.heuristic_score == float('inf'):

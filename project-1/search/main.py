@@ -6,6 +6,7 @@ Project Part A: Searching
 import sys
 import json
 import time
+import heapq
 from search.util import print_slide, print_swing
 from search.Board import Board
 from search.board_util import *
@@ -28,52 +29,36 @@ def main(data=None):
     game_board.print_grid()
 
     # A* Algorithm
-    open_list = []
-    closed_list = []
-    open_list.append(game_board)
+    open_set = set()
+    open_heap = []
+    closed_set = set()
+    open_set.add(game_board)
+    heapq.heappush(open_heap, game_board)
     current_node = None
 
-    while len(open_list) > 0:
-        current_node = open_list[0]
-        # Explore the open board with the lowest heuristic score
-        for open_board in open_list:
-            if open_board.f < current_node.f:
-                current_node = open_board
-        open_list.remove(current_node)
-        closed_list.append(current_node)
+    while len(open_set) > 0:
+        current_node = heapq.heappop(open_heap)
+        open_set.remove(current_node)
+        closed_set.add(current_node)
 
+        print(len(open_set), len(open_heap), len(closed_set))
+
+        current_node.print_grid()
         if current_node.is_game_over():
             break
 
         # Add children of the current node to the list of nodes to be explored
         current_node.generate_children()
         for child in current_node.children:
-            is_closed = False
-            for closed_child in closed_list:
-                # If the child has already been closed, set a flag to skip the outer loop, then break the inner loop
-                if child == closed_child:
-                    is_closed = True
-                    break
-            if is_closed:
-                continue
-
-            # The child isn't closed yet, so generate g(n) and f(n) = g(n) + heuristic(n)
+            # Generate g(n) and f(n) = g(n) + heuristic(n)
             child.g = current_node.g + 1
             child.f = child.g + child.heuristic_score
 
-            # If the child is already in the open set, and that version has a lower g(n) cost, don't add this one.
-            superior_is_open = False
-            for open_node in open_list:
-                if child == open_node:
-                    if child.g > open_node.g:
-                        superior_is_open = True
-                        break
-                    else:
-                        open_list.remove(open_node)
-            if superior_is_open:
+            if (child in closed_set) or (child in open_set):
                 continue
 
-            open_list.append(child)
+            open_set.add(child)
+            heapq.heappush(open_heap, child)
 
         # Time out after 30s for testing
         if time.time() - start_time > 30:
