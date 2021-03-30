@@ -5,19 +5,22 @@ Project Part A: Searching
 
 import sys
 import json
+import time
 from search.util import print_slide, print_swing
 from search.Board import Board
 from search.board_util import *
 
 
-def main():
-    # Load the JSON file with the board
-    try:
-        with open(sys.argv[1]) as file:
-            data = json.load(file)
-    except IndexError:
-        print("usage: python3 -m search path/to/input.json", file=sys.stderr)
-        sys.exit(1)
+def main(data=None):
+    start_time = time.time()
+    if data is None:
+        # Load the JSON file with the board
+        try:
+            with open(sys.argv[1]) as file:
+                data = json.load(file)
+        except IndexError:
+            print("usage: python3 -m search path/to/input.json", file=sys.stderr)
+            sys.exit(1)
 
     # Initialise the board with the data
     game_board = Board(radius=5)
@@ -72,6 +75,11 @@ def main():
 
             open_list.append(child)
 
+        # Time out after 30s for testing
+        if time.time() - start_time > 30:
+            print("Timed Out", file=sys.stderr)
+            return False
+
     # Store the final board
     terminal_board = current_node
 
@@ -91,4 +99,6 @@ def main():
                 print_swing(turn, from_hex[0], from_hex[1], to_hex[0], to_hex[1])
 
     terminal_board.print_grid()
+
+    return True
 
