@@ -211,7 +211,6 @@ class Board:
         """Sets the heuristic as the sum of the manhattan distances between each lower piece and their closest opponent
         killer."""
         self.heuristic_score = 0
-        i = 0
         for symbol, coordinates in self.lower_pieces.items():
             if not coordinates:
                 continue
@@ -222,11 +221,32 @@ class Board:
                 for killer_coord in killer_coords:
                     closest_killer_dist = min(closest_killer_dist, manhattan_distance_cube(lower_coord, killer_coord))
                 # it is important to break ties between two equidistant targets, so random noise is added.
-                self.heuristic_score += closest_killer_dist + random.uniform(0,0.001) # - random.uniform(0,0.001) for admissibility
-                i += 1
+                self.heuristic_score += closest_killer_dist + random.uniform(0, 0.001)
                 closest_killer_dist = float('inf')
 
-        # Average
-        #try:
-        #    self.heuristic_score = self.heuristic_score/i
-        #except: ZeroDivisionError
+    def bfs_distance(self, a, b):
+        """Uses BFS to return the distance between two coordinates around any obstacles. Algorithm adapted from
+        https://www.redblobgames.com/pathfinding/a-star/introduction.html"""
+
+        frontier = [a]
+        came_from = dict()
+        came_from[a] = None
+        current = None
+
+        while frontier:
+            current = frontier.pop()
+
+            if current == b:
+                break
+
+            for next_hex in get_valid_slides(current, self.radius, self.blocked_coords):
+                if next_hex not in came_from:
+                    frontier.append(next_hex)
+                    came_from[next_hex] = current
+
+        distance = 0
+        while current != a:
+            current = came_from[current]
+            distance += 1
+
+        return distance
