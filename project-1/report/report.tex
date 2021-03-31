@@ -17,23 +17,24 @@ The game was thought of as a tree of board states, with the root node as the ini
 
 \subsection*{What search algorithm does your program use to solve this problem, and why did you choose this algorithm? Comment on the algorithm’s efficiency, completeness, and optimality. If you have developed heuristics to inform your search, explain them and comment on their admissibility.}
 The program uses the A* algorithm to determine the most favourable actions. This search algorithm was chosen as it is complete for problems with finite state spaces like RoPaSci360, as well as being optimal when provided a consistently admissible heuristic. A* uses a combined evaluation function: $f(n) = h(n) + g(n)$, where $g(n)$ is the cost to get from the starting node to node $n$ (known) and $h$ is the estimated cost to get from node $n$ to the goal node. In choosing a heuristic function, $h(n)$, we considered admissible heuristics such as \textit{half of the average hexagonal Manhattan distance between each lower token and its closest predator}\footnote{A token's predator is the piece on the opposite team which can kill it. eg. $P$ is a predator of $r$} (see Figure \ref{fig: hex manhattan},) but after comparing the speed of a variety of heuristics, and considering there was no constraint on finding an optimal solution, an inadmissible heuristic was selected.\\[2mm]
-The heuristic which was ultimately used was the sum of the distances between each lower token and it's closest predator \footnote{We also added an inconsequential amount of random noise to the heuristic to efficiently break ties between nodes in the search tree with equal heuristic values}. Rather than using the Hexagonal Manhattan Distance, a Breadth First Search \footnote{adapted from \url{https://www.redblobgames.com/pathfinding/a-star/introduction.html}} was used to find the length of a path which navigated around all blocked hexes on the board. This was a vastly superior estimate of the actual distance to a node in cases with many block tokens, and allowed us to find paths to the goal in situations where other choices of heuristic would get stuck unable to navigate an obstacle. Figure \ref{fig: hex manhattan BFS} is a comparison of the two methods, showing how Manhattan Distance makes an inaccurate estimation by calculating moves through blocked squares.\\[2mm]
+The heuristic which was ultimately used was the sum of the distances between each lower token and it's closest predator \footnote{We also added an inconsequential amount of random noise to the heuristic to efficiently break ties between nodes in the search tree with equal heuristic values}. Rather than using the Hexagonal Manhattan Distance, a Breadth First Search \footnote{adapted from \url{https://www.redblobgames.com/pathfinding/a-star/introduction.html}} was used to find the length of a path which navigated around all blocked hexes on the board. This was a vastly superior estimate of the actual distance to a node in cases with many block tokens, and allowed us to find paths to the goal in situations where other choices of heuristic would get stuck unable to navigate an obstacle. Figure \ref{fig: comparison} is a comparison of the two methods, showing how Manhattan Distance makes an inaccurate estimation by calculating moves through blocked squares.\\[2mm]
 It was a conscious decision that this heuristic is not admissible, in fact in almost every case it vastly overestimates the amount of turns remaining in the game. Although this means our algorithm cannot guarantee an optimal solution, profiling of the program showed such substantial improvements in the execution time that we considered this a reasonable trade-off. This conclusion agrees with analysis of the A* algorithm which states states that A* ``...can run faster...if $h(n)$ is sometimes greater than the cost of moving from $n$ to the goal.''\footnote{From lectures Week 3: Informed Search Methods}
 
 \begin{figure}[]
     \centering
     \begin{subfigure}[b]{0.4\linewidth}
-      \includegraphics[width=\linewidth]{hex-manhattan.png}
+      \includegraphics[width=\linewidth]{hex-both-manhattan.png}
       \caption{A visualisation of the calculation of Hexagonal Manhattan Distance.}
       \label{fig: hex manhattan}
     \end{subfigure}
     \hspace{1cm}
-    \begin{subfigure}[b]{0.42\linewidth}
-      \includegraphics[width=\linewidth]{hex-manhattan-BFS-1.png}
-      \caption{A comparison of the BFS and Hexagonal Manhattan Distance heuristics.}
+    \begin{subfigure}[b]{0.4\linewidth}
+      \includegraphics[width=\linewidth]{hex-both-BFS.png}
+      \caption{A visualisation of the BFS distance calculation.}
       \label{fig: hex manhattan BFS}
     \end{subfigure}
-    \caption{Visualisations of alternative algorithms for distance calculation.}
+    \caption{Comparison of alternative algorithms for distance calculation.}
+    \label{fig: comparison}
 \end{figure}
 
 \newpage
