@@ -37,6 +37,7 @@ class Player:
         # put your code here
         self.game_board.apply_move(opponent_action,True)
         self.game_board.apply_move(player_action, False)
+        self.game_board.battle()
         self.game_board.turn += 1
         if player_action[0] == "THROW":
             self.game_board.thrown += 1

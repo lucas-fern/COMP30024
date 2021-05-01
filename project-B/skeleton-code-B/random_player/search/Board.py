@@ -158,7 +158,6 @@ class Board:
     def apply_move(self, move, opponent):
         """Applies a move. Moves piece regardless of whether move is valid."""
         type, p1, p2 = move
-        print(type)
         action = None
         if (opponent and self.identity == "upper") or (not opponent and self.identity == "lower"):
             tokens = ('r','p','s')
@@ -171,23 +170,15 @@ class Board:
         if type == 'SLIDE' or type == 'SWING':
             # We dont get told which token is moving, just where its coming and going from, to work out which one it is, try all 3 and catch errors, t2 is true token
             t2 = None
-            #print(move)
             for t in tokens:
-                #print("trying to remove one of", tokens, "from:", self.grid[centered_to_array_coord(p1,self.radius)])
                 try:
                     self.grid[centered_to_array_coord(p1,self.radius)].remove(t)
                     self.grid[centered_to_array_coord(p2,self.radius)].append(t)
                     t2 = t
                 except ValueError:
                     pass
-            try:
-                pieces[t2].remove(p1)
-                pieces[t2].append(p2)
-            except KeyError:
-                #print(p1,p2,t2, opponent)
-                #self.print_grid()
-                #time.sleep(200)
-                pass
+            pieces[t2].remove(p1)
+            pieces[t2].append(p2)
         elif type == 'THROW':
             if action == 'upper':
                 self.grid[centered_to_array_coord(p2,self.radius)].append(p1.upper())
@@ -196,10 +187,9 @@ class Board:
                 self.grid[centered_to_array_coord(p2,self.radius)].append(p1.lower())
                 pieces[p1.lower()].append(p2)
 
-        self.battle()  # Lets remove the dead pieces here so we aren't passing around half-completed moves
-        if not opponent:
-            print(self.identity, "understands the board to be:")
-            self.print_grid(compact=True)
+        #if not opponent:
+        #    print(self.identity, "understands the board to be:")
+        #    self.print_grid(compact=True)
 
     def spawn_offspring(self) -> 'Board':
         """Creates a child board without any children of its own and no heuristic score."""
