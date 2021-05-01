@@ -60,10 +60,10 @@ def main(data=None):
             open_set.add(child)
             heapq.heappush(open_heap, child)
 
-        # Time out after 30s for testing
-        if time.time() - start_time > 30:
-            print("Timed Out", file=sys.stderr)
-            return False
+        # # Time out after 30s for testing
+        # if time.time() - start_time > 30:
+        #     print("Timed Out", file=sys.stderr)
+        #     return False
 
     # Store the final board
     terminal_board = current_node
@@ -85,5 +85,6 @@ def main(data=None):
 
     terminal_board.print_grid()
 
+    print(f'# Took {time.time() - start_time} seconds')
     return True
 
