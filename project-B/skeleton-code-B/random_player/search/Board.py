@@ -1,11 +1,11 @@
 import numpy as np
-import itertools
+import itertools, time
 import random
 import traceback
 import sys
 import copy
-from search.util import print_board
-from search.board_util import *
+from random_player.search.util import print_board
+from random_player.search.board_util import *
 
 
 class Board:
@@ -26,6 +26,10 @@ class Board:
         self.g = 0
         self.connecting_move_set = None
         self.parent = None
+        self.turn = 1
+        self.thrown = 0
+        self.to_move = 'upper'
+        self.identity = None
 
         # Initialises a board of empty lists - the board will be filled according to
         # https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -95,6 +99,42 @@ class Board:
                 # Ditto above
                 sys.exit(1)
 
+    def generate_moves(self) -> list:
+        """Generates all possible moves for one player."""
+        moves = []
+        if self.to_move == 'upper':
+            pieces = self.upper_pieces
+        else:
+            pieces = self.lower_pieces
+        for identifier in pieces:
+            for from_tile in pieces[identifier]:
+                # Cant use sets since multiple identical pieces can exist on the same coordinate
+                slide_moves = [("SLIDE", from_tile, to_tile) for to_tile in
+                               get_valid_slides(from_tile, self.radius, self.blocked_coords)]
+                swing_moves = [("SWING", from_tile, to_tile) for to_tile in
+                               get_valid_swings(from_tile, identifier, self.grid, self.radius, self.blocked_coords)]
+                for i in (*slide_moves, *swing_moves): moves.append(i)
+        for i in self.get_valid_throws(): moves.append(i)
+        return moves
+
+    def get_valid_throws(self):
+        """ Returns a list of valid throws for the current turn and player to move"""
+        if self.thrown >= 2*self.radius - 1:
+            return []
+        throws = []
+        if self.to_move == 'upper':
+            flip = 1
+            identifiers = ('R', 'P', 'S')
+        else:
+            flip = -1
+            identifiers = ('r', 'p', 's')
+        for row in range(1, self.thrown + 2):
+            candidate_hexes = [(flip*(self.radius-row), i) for i in range(-(self.radius - 1),self.radius)]
+            valid_hexes = [candidate_hexes[i] for i in range(len(candidate_hexes)) if valid_centered_hex(candidate_hexes[i],self.radius)]
+            for hex in valid_hexes:
+                for i in [("THROW",j.lower(),hex) for j in identifiers]: throws.append(i)
+        return throws
+
     def apply_moves(self, move_set) -> 'Board':
         """Applies a move set from the output of Board.generate_token_moves(). Moves pieces regardless of whether moves
         are valid. Returns a new board object with the pieces moved."""
@@ -114,6 +154,52 @@ class Board:
         new_board.connecting_move_set = move_set
         new_board.parent = self
         return new_board
+
+    def apply_move(self, move, opponent):
+        """Applies a move. Moves piece regardless of whether move is valid."""
+        type, p1, p2 = move
+        print(type)
+        action = None
+        if (opponent and self.identity == "upper") or (not opponent and self.identity == "lower"):
+            tokens = ('r','p','s')
+            pieces = self.lower_pieces
+            action = 'lower'
+        else:
+            tokens = ('R','P','S')
+            pieces = self.upper_pieces
+            action = 'upper'
+        if type == 'SLIDE' or type == 'SWING':
+            # We dont get told which token is moving, just where its coming and going from, to work out which one it is, try all 3 and catch errors, t2 is true token
+            t2 = None
+            #print(move)
+            for t in tokens:
+                #print("trying to remove one of", tokens, "from:", self.grid[centered_to_array_coord(p1,self.radius)])
+                try:
+                    self.grid[centered_to_array_coord(p1,self.radius)].remove(t)
+                    self.grid[centered_to_array_coord(p2,self.radius)].append(t)
+                    t2 = t
+                except ValueError:
+                    pass
+            try:
+                pieces[t2].remove(p1)
+                pieces[t2].append(p2)
+            except KeyError:
+                #print(p1,p2,t2, opponent)
+                #self.print_grid()
+                #time.sleep(200)
+                pass
+        elif type == 'THROW':
+            if action == 'upper':
+                self.grid[centered_to_array_coord(p2,self.radius)].append(p1.upper())
+                pieces[p1.upper()].append(p2)
+            elif action == 'lower':
+                self.grid[centered_to_array_coord(p2,self.radius)].append(p1.lower())
+                pieces[p1.lower()].append(p2)
+
+        self.battle()  # Lets remove the dead pieces here so we aren't passing around half-completed moves
+        if not opponent:
+            print(self.identity, "understands the board to be:")
+            self.print_grid(compact=True)
 
     def spawn_offspring(self) -> 'Board':
         """Creates a child board without any children of its own and no heuristic score."""
