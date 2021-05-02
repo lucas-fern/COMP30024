@@ -1,3 +1,7 @@
+from team_name.search.miniBoard import Board
+from monte_carlo_tree_search import MCTS, Node
+import random
+
 
 class Player:
     def __init__(self, player):
@@ -10,6 +14,10 @@ class Player:
         as Lower).
         """
         # put your code here
+        # Initialise the board
+        self.tree = MCTS()
+        self.game_board = Board(radius=5)
+        self.identity = player
 
     def action(self):
         """
@@ -17,7 +25,14 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-    
+        self.game_board.turn = self.identity
+        for _ in range(50):
+            self.tree.do_rollout(self.game_board)
+        self.game_board = self.tree.choose(self.game_board)
+        move = self.game_board.last_action
+
+        return move
+
     def update(self, opponent_action, player_action):
         """
         Called at the end of each turn to inform this player of both
@@ -27,4 +42,10 @@ class Player:
         and player_action is this instance's latest chosen action.
         """
         # put your code here
+        self.game_board.apply_move(opponent_action)
+        self.game_board.battle()
+        self.game_board.turn += 1
+        if player_action[0] == "THROW":
+            self.game_board.thrown += 1
+
 
