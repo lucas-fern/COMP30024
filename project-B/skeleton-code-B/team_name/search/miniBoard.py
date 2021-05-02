@@ -41,30 +41,46 @@ class Board:
         moves = self.generate_moves()
         children = []
         for move in moves:
-            child = Board(radius=self.radius, parent=self, turn=None, thrown=self.thrown, last_action=move, n_turns=self.n_turns + 1)
-            child.upper_pieces, child.lower_pieces, child.grid = self.upper_pieces, self.lower_pieces, self.grid
+            child = Board(radius=self.radius, parent=self, turn=self.turn, last_action=move, n_turns=self.n_turns + 1)
+            child.upper_pieces, child.lower_pieces, child.grid, child.thrown = copy.deepcopy(self.upper_pieces), copy.deepcopy(self.lower_pieces),\
+                                                                 copy.deepcopy(self.grid), copy.deepcopy(self.thrown)
+            child.apply_move(move)
             if self.turn == 'upper':
                 child.turn = 'lower'
             else:
                 child.turn = 'upper'
-            child.apply_move(move)
             child.set_winner_terminal()
             if move[0] == "THROW":
                 child.thrown[self.turn] += 1
             children.append(child)
         return children
 
+    def print_grid(self, compact=False) -> None:
+        """Converts the board grid to a dictionary using grid_to_dict() and uses search.util.print_board() to print
+        a visual representation of the board state."""
+        print_dict = self.grid_to_dict()
+        print_board(print_dict, compact=compact)
+
+    def grid_to_dict(self) -> dict:
+        """Converts the board grid to a dictionary of coordinate: piece(s) pairs. The dictionary is compatible with
+        search.util.print_board()."""
+        centered_dict = {}
+        for row, col in np.ndindex(self.grid.shape):
+            if self.grid[row, col]:
+                pieces = self.grid[row, col]
+                string = ''.join([piece if piece else 'Block' for piece in pieces])
+                centered_dict[array_to_centered_coord((row, col), self.radius)] = string
+
+        return centered_dict
+
     def set_winner_terminal(self):
         # analyse remaining tokens
         _WHAT_BEATS = {"r": "p", "p": "s", "s": "r"}
         up_throws = 9 - self.thrown["upper"]
-        up_tokens = [
-            s.lower() for x in self.board.values() for s in x if s.isupper()
-        ]
-        up_tokens = [s.lower() for (s,v) in self.upper_pieces if len(v) > 0]
+        up_tokens = [s.lower() for (s,v) in self.upper_pieces.items() if len(v) > 0]
         up_symset = set(up_tokens)
         lo_throws = 9 - self.thrown["lower"]
-        lo_tokens = [s.lower() for (s,v) in self.lower_pieces if len(v) > 0]
+        lo_tokens = [s.lower() for (s,v) in self.lower_pieces.items() if len(v) > 0]
         lo_symset = set(lo_tokens)
         up_invinc = [
             s for s in up_symset
@@ -134,7 +150,7 @@ class Board:
     def apply_move(self, move):
         """Applies a move. Moves piece regardless of whether move is valid."""
         type, p1, p2 = move
-        if self.turn == "lower":
+        if self.turn == 'lower':
             tokens = ('r','p','s')
             pieces = self.lower_pieces
         else:
@@ -143,6 +159,9 @@ class Board:
         if type == 'SLIDE' or type == 'SWING':
             # We dont get told which token is moving, just where its coming and going from, to work out which one it is, try all 3 and catch errors, t2 is true token
             t2 = None
+            #print("trying to remove on of", tokens, "from", self.grid[centered_to_array_coord(p1,self.radius)], "@", p1)
+            #print("on board")
+            #self.print_grid()
             for t in tokens:
                 try:
                     self.grid[centered_to_array_coord(p1,self.radius)].remove(t)
@@ -150,8 +169,12 @@ class Board:
                     t2 = t
                 except ValueError:
                     pass
-            pieces[t2].remove(p1)
-            pieces[t2].append(p2)
+            try:
+                pieces[t2].remove(p1)
+                pieces[t2].append(p2)
+            except KeyError:
+                print(pieces,t2,p1)
+                time.sleep(20)
         elif type == 'THROW':
             if self.turn == 'upper':
                 self.grid[centered_to_array_coord(p2,self.radius)].append(p1.upper())
@@ -194,7 +217,7 @@ class Board:
     def generate_moves(self) -> list:
         """Generates all possible moves for one player."""
         moves = []
-        if self.to_move == 'upper':
+        if self.turn == 'upper':
             pieces = self.upper_pieces
         else:
             pieces = self.lower_pieces
@@ -202,12 +225,30 @@ class Board:
             for from_tile in pieces[identifier]:
                 # Cant use sets since multiple identical pieces can exist on the same coordinate
                 slide_moves = [("SLIDE", from_tile, to_tile) for to_tile in
-                               get_valid_slides(from_tile, self.radius, self.blocked_coords)]
+                               get_valid_slides(from_tile, self.radius)]
                 swing_moves = [("SWING", from_tile, to_tile) for to_tile in
-                               get_valid_swings(from_tile, identifier, self.grid, self.radius, self.blocked_coords)]
+                               get_valid_swings(from_tile, identifier, self.grid, self.radius)]
                 for i in (*slide_moves, *swing_moves): moves.append(i)
         for i in self.get_valid_throws(): moves.append(i)
         return moves
+
+    def get_valid_throws(self):
+        """ Returns a list of valid throws for the current turn and player to move"""
+        if self.thrown[self.turn] >= 2*self.radius - 1:
+            return []
+        throws = []
+        if self.turn == 'upper':
+            flip = 1
+            identifiers = ('R', 'P', 'S')
+        else:
+            flip = -1
+            identifiers = ('r', 'p', 's')
+        for row in range(1, self.thrown[self.turn] + 2):
+            candidate_hexes = [(flip*(self.radius-row), i) for i in range(-(self.radius - 1),self.radius)]
+            valid_hexes = [candidate_hexes[i] for i in range(len(candidate_hexes)) if valid_centered_hex(candidate_hexes[i],self.radius)]
+            for hex in valid_hexes:
+                for i in [("THROW",j.lower(),hex) for j in identifiers]: throws.append(i)
+        return throws
 
     def find_random_child(self):
         if self.terminal:
