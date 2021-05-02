@@ -49,9 +49,8 @@ class Board:
                 child.turn = 'lower'
             else:
                 child.turn = 'upper'
+                child.battle()
             child.set_winner_terminal()
-            if move[0] == "THROW":
-                child.thrown[self.turn] += 1
             children.append(child)
         return children
 
@@ -176,6 +175,7 @@ class Board:
                 print(pieces,t2,p1)
                 time.sleep(20)
         elif type == 'THROW':
+            self.thrown[self.turn] += 1
             if self.turn == 'upper':
                 self.grid[centered_to_array_coord(p2,self.radius)].append(p1.upper())
                 pieces[p1.upper()].append(p2)
@@ -261,8 +261,14 @@ class Board:
             raise RuntimeError("reward called on nonterminal board")
         if self.winner is self.turn:
             # It's your turn and you've already won. Should be impossible.
-            raise RuntimeError("reward called on unreachable board ")
-        if self.turn is (not self.winner):
+            #debugboard = self
+            #for i in range(5):
+            #    debugboard.print_grid(compact=True)
+            #    debugboard = debugboard.parent
+            #print(self.winner,self.turn)
+            return 1
+            print("reward called on unreachable board ??? ") #TODO: Investigate this
+        if (self.turn is 'lower' and self.winner is 'upper') or(self.turn is 'upper' and self.winner is 'lower'):
             return 0  # Your opponent has just won. Bad.
         if self.winner is None:
             return 0.5  # Board is a tie

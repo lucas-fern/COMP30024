@@ -27,7 +27,8 @@ class Player:
         """
         # put your code here
         self.game_board.turn = self.identity
-        for _ in range(50):
+        for i in range(5):
+            print(f"{i}/5")
             self.tree.do_rollout(self.game_board)
         self.game_board = self.tree.choose(self.game_board)
         move = self.game_board.last_action
@@ -45,6 +46,11 @@ class Player:
         # put your code here
         self.game_board.apply_move(opponent_action)
         self.game_board.battle()
-        self.game_board.turn += 1
+        self.game_board.n_turns += 1
+        if self.game_board.turn == 'upper':
+            self.game_board.turn = 'lower'
+        else:
+            self.game_board.turn = 'upper'
+
 
 
