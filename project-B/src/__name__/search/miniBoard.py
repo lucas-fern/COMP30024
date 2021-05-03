@@ -86,12 +86,10 @@ class Board:
         lo_tokens = [s.lower() for (s, v) in self.lower_pieces.items() if len(v) > 0]
         lo_symset = set(lo_tokens)
         up_invinc = [
-            s for s in up_symset
-            if (lo_throws == 0) and (_WHAT_BEATS[s] not in lo_symset)
+            s for s in up_symset if (lo_throws == 0) and (_WHAT_BEATS[s] not in lo_symset)
         ]
         lo_invinc = [
-            s for s in lo_symset
-            if (up_throws == 0) and (_WHAT_BEATS[s] not in up_symset)
+            s for s in lo_symset if (up_throws == 0) and (_WHAT_BEATS[s] not in up_symset)
         ]
         up_notoks = (up_throws == 0) and (len(up_tokens) == 0)
         lo_notoks = (lo_throws == 0) and (len(lo_tokens) == 0)
@@ -264,7 +262,7 @@ class Board:
     def find_random_child(self):
         if self.terminal:
             return None  # If the game is finished then no moves can be made
-        children = self.find_children()
+        children = self.find_children()  # Seems dangerously inefficient to generate all then discard them
         return random.choice(children)
 
     def reward(self):
