@@ -1,4 +1,4 @@
-> python -m referee random_player __name__
+# 1 > python -m referee random_player __name__
 
 Traceback (most recent call last):
   File "C:\Users\lucas\AppData\Local\Programs\Python\Python39\lib\runpy.py", line 197, in _run_module_as_main
@@ -19,4 +19,44 @@ Traceback (most recent call last):
     raise RuntimeError(f"choose called on terminal node {node}")
 RuntimeError: choose called on terminal node ['S']['R'][]['R'][][][][][][][]['S'][][][][][][][][]['P'][][][][][][][][][][][]['P'][][][][][][][][]['P'][][][][][][][][]['S'][][][][][][][]['s'][][][][][][][][][][][][][][][][][][][]['s'][][]
 
+# 2 > python -m referee random_player __name__
 
+** game error!
+* error: invalid action!
+* lower player's action, ('THROW', 'r', (4, -2)), is not well-formed or not available. See specification and game rules for details, or consider currently available actions:
+* * ('THROW', 'r', (-3, 0)) - THROW symbol r to (-3, 0)
+* * ('THROW', 'p', (-3, 0)) - THROW symbol p to (-3, 0)
+* * ('THROW', 's', (-3, 0)) - THROW symbol s to (-3, 0)
+* * ('THROW', 'r', (-3, 3)) - THROW symbol r to (-3, 3)
+* * ('THROW', 'p', (-3, 3)) - THROW symbol p to (-3, 3)
+* * ('THROW', 's', (-3, 3)) - THROW symbol s to (-3, 3)
+* * ('THROW', 'r', (-4, 4)) - THROW symbol r to (-4, 4)
+* * ('THROW', 'p', (-4, 4)) - THROW symbol p to (-4, 4)
+* * ('THROW', 's', (-4, 4)) - THROW symbol s to (-4, 4)
+* * ('THROW', 'r', (-4, 1)) - THROW symbol r to (-4, 1)
+* * ('THROW', 'p', (-4, 1)) - THROW symbol p to (-4, 1)
+* * ('THROW', 's', (-4, 1)) - THROW symbol s to (-4, 1)
+* * ('THROW', 'r', (-3, 2)) - THROW symbol r to (-3, 2)
+* * ('THROW', 'p', (-3, 2)) - THROW symbol p to (-3, 2)
+* * ('THROW', 's', (-3, 2)) - THROW symbol s to (-3, 2)
+* * ('THROW', 'r', (-4, 0)) - THROW symbol r to (-4, 0)
+* * ('THROW', 'p', (-4, 0)) - THROW symbol p to (-4, 0)
+* * ('THROW', 's', (-4, 0)) - THROW symbol s to (-4, 0)
+* * ('THROW', 'r', (-4, 3)) - THROW symbol r to (-4, 3)
+* * ('THROW', 'p', (-4, 3)) - THROW symbol p to (-4, 3)
+* * ('THROW', 's', (-4, 3)) - THROW symbol s to (-4, 3)
+* * ('THROW', 'r', (-3, -1)) - THROW symbol r to (-3, -1)
+* * ('THROW', 'p', (-3, -1)) - THROW symbol p to (-3, -1)
+* * ('THROW', 's', (-3, -1)) - THROW symbol s to (-3, -1)
+* * ('THROW', 'r', (-3, 4)) - THROW symbol r to (-3, 4)
+* * ('THROW', 'p', (-3, 4)) - THROW symbol p to (-3, 4)
+* * ('THROW', 's', (-3, 4)) - THROW symbol s to (-3, 4)
+* * ('THROW', 'r', (-3, 1)) - THROW symbol r to (-3, 1)
+* * ('THROW', 'p', (-3, 1)) - THROW symbol p to (-3, 1)
+* * ('THROW', 's', (-3, 1)) - THROW symbol s to (-3, 1)
+* * ('THROW', 'r', (-4, 2)) - THROW symbol r to (-4, 2)
+* * ('THROW', 'p', (-4, 2)) - THROW symbol p to (-4, 2)
+* * ('THROW', 's', (-4, 2)) - THROW symbol s to (-4, 2)
+* * ('SLIDE', (-4, 0), (-3, -1)) - SLIDE from (-4, 0) to (-3, -1)
+* * ('SLIDE', (-4, 0), (-4, 1)) - SLIDE from (-4, 0) to (-4, 1)
+* * ('SLIDE', (-4, 0), (-3, 0)) - SLIDE from (-4, 0) to (-3, 0)
