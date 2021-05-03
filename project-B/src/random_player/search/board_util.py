@@ -102,26 +102,26 @@ def valid_centered_hex(centered_coord, board_radius):
            -board_radius < centered_coord[1] < board_radius
 
 
-def get_valid_slides(centered_coord, board_radius, blocked_coords):
+def get_valid_slides(centered_coord, board_radius):
     """Returns a list of coordinates which a given centered coordinate can perform a slide move to."""
-    return get_adjacent_hexes(centered_coord, board_radius) - blocked_coords  # - here is set difference
+    return get_adjacent_hexes(centered_coord, board_radius)  # - here is set difference
 
 
-def get_valid_swings(centered_coord, identifier, board_grid, board_radius, blocked_coords):
+def get_valid_swings(centered_coord, identifier, board_grid, board_radius):
     """Returns a list of coordinates which a given centered coordinate can perform a swing move to."""
     valid_swings = set()
     for coord in get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius):
         valid_swings |= get_adjacent_hexes(coord, board_radius)
 
     # Valid swings are any hex adjacent to an adjacent friendly which isn't blocked, slideable, or current.
-    return valid_swings - blocked_coords - get_valid_slides(centered_coord, board_radius, blocked_coords) \
+    return valid_swings - get_valid_slides(centered_coord, board_radius) \
         - {centered_coord}
 
 
-def get_valid_moves(centered_coord, identifier, board_grid, board_radius, blocked_coords):
+def get_valid_moves(centered_coord, identifier, board_grid, board_radius):
     """Returns the union of valid slide and swing moves for a piece from a board coordinate."""
-    return get_valid_swings(centered_coord, identifier, board_grid, board_radius, blocked_coords) | \
-           get_valid_slides(centered_coord, board_radius, blocked_coords)
+    return get_valid_swings(centered_coord, identifier, board_grid, board_radius) | \
+           get_valid_slides(centered_coord, board_radius)
 
 
 def get_adjacent_friendlies(centered_coord, identifier, board_grid, board_radius):

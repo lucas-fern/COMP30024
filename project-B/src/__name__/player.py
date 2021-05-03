@@ -1,5 +1,5 @@
 from team_name.search.miniBoard import Board
-from monte_carlo_tree_search import MCTS, Node
+from team_name.monte_carlo_tree_search import MCTS, Node
 import random
 
 
@@ -18,6 +18,7 @@ class Player:
         self.tree = MCTS()
         self.game_board = Board(radius=5)
         self.identity = player
+        self.game_board.turn = self.identity
 
     def action(self):
         """
@@ -26,7 +27,8 @@ class Player:
         """
         # put your code here
         self.game_board.turn = self.identity
-        for _ in range(50):
+        for i in range(5):
+            print(f"{i}/5")
             self.tree.do_rollout(self.game_board)
         self.game_board = self.tree.choose(self.game_board)
         move = self.game_board.last_action
@@ -44,8 +46,11 @@ class Player:
         # put your code here
         self.game_board.apply_move(opponent_action)
         self.game_board.battle()
-        self.game_board.turn += 1
-        if player_action[0] == "THROW":
-            self.game_board.thrown += 1
+        self.game_board.n_turns += 1
+        if self.game_board.turn == 'upper':
+            self.game_board.turn = 'lower'
+        else:
+            self.game_board.turn = 'upper'
+
 
 
