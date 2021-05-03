@@ -19,7 +19,6 @@ class Board:
         self.radius = radius
         self.lower_pieces = {'r': [], 'p': [], 's': []}
         self.upper_pieces = {'R': [], 'P': [], 'S': []}
-        self.blocked_coords = set()
         self.heuristic_score = None
         self.children = None
         self.f = 0
@@ -110,9 +109,9 @@ class Board:
             for from_tile in pieces[identifier]:
                 # Cant use sets since multiple identical pieces can exist on the same coordinate
                 slide_moves = [("SLIDE", from_tile, to_tile) for to_tile in
-                               get_valid_slides(from_tile, self.radius, self.blocked_coords)]
+                               get_valid_slides(from_tile, self.radius)]
                 swing_moves = [("SWING", from_tile, to_tile) for to_tile in
-                               get_valid_swings(from_tile, identifier, self.grid, self.radius, self.blocked_coords)]
+                               get_valid_swings(from_tile, identifier, self.grid, self.radius)]
                 for i in (*slide_moves, *swing_moves): moves.append(i)
         for i in self.get_valid_throws(): moves.append(i)
         return moves

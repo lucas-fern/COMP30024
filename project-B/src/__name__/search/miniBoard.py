@@ -4,8 +4,8 @@ import random
 import traceback
 import sys
 import copy
-from team_name.search.util import print_board
-from team_name.search.board_util import *
+from __name__.search.util import print_board
+from __name__.search.board_util import *
 
 
 class Board:

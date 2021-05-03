@@ -1,1 +1,1 @@
-from team_name.player import Player
+from __name__.player import Player

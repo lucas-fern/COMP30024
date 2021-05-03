@@ -1,5 +1,5 @@
-from team_name.search.miniBoard import Board
-from team_name.monte_carlo_tree_search import MCTS, Node
+from __name__.search.miniBoard import Board
+from __name__.monte_carlo_tree_search import MCTS, Node
 import random
 
 
