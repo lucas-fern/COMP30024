@@ -1,0 +1,22 @@
+> python -m referee random_player __name__
+
+Traceback (most recent call last):
+  File "C:\Users\lucas\AppData\Local\Programs\Python\Python39\lib\runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Users\lucas\AppData\Local\Programs\Python\Python39\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\lucas\OneDrive - The University of Melbourne\2021\semester-1\COMP30024\projects\project-B\src\referee\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\lucas\OneDrive - The University of Melbourne\2021\semester-1\COMP30024\projects\project-B\src\referee\main.py", line 45, in main
+    result = play(
+  File "C:\Users\lucas\OneDrive - The University of Melbourne\2021\semester-1\COMP30024\projects\project-B\src\referee\game.py", line 122, in play
+    action_2 = player_2.action()
+  File "C:\Users\lucas\OneDrive - The University of Melbourne\2021\semester-1\COMP30024\projects\project-B\src\referee\player.py", line 57, in action
+    action = self.player.action()
+  File "C:\Users\lucas\OneDrive - The University of Melbourne\2021\semester-1\COMP30024\projects\project-B\src\__name__\player.py", line 33, in action
+    self.game_board = self.tree.choose(self.game_board)
+  File "C:\Users\lucas\OneDrive - The University of Melbourne\2021\semester-1\COMP30024\projects\project-B\src\__name__\monte_carlo_tree_search.py", line 24, in choose
+    raise RuntimeError(f"choose called on terminal node {node}")
+RuntimeError: choose called on terminal node ['S']['R'][]['R'][][][][][][][]['S'][][][][][][][][]['P'][][][][][][][][][][][]['P'][][][][][][][][]['P'][][][][][][][][]['S'][][][][][][][]['s'][][][][][][][][][][][][][][][][][][][]['s'][][]
+
+
