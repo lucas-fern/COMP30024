@@ -151,3 +151,5 @@ def print_board(board_dict, message="", compact=True, ansi=False, **kwargs):
     # fill in the template to create the board drawing, then print!
     board = template.format(multiline_message, *cells)
     print(board, **kwargs)
+    
+    return board

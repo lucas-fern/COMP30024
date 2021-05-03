@@ -3,6 +3,7 @@ specification-B.pdf
 
 __pycache__
 .idea
+__MACOSX
 
 # For LaTeX (source: https://github.com/github/gitignore/blob/master/TeX.gitignore)
 ## Core latex/pdflatex auxiliary files:
