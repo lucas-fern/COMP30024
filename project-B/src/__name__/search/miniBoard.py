@@ -1,8 +1,6 @@
 import numpy as np
-import itertools, time
+import time
 import random
-import traceback
-import sys
 import copy
 from __name__.search.util import print_board
 from __name__.search.board_util import *
@@ -15,7 +13,9 @@ class Board:
     We want to work in centered coordinates wherever possible and only convert to array coordinates for accessing the
     pieces in the board grid."""
 
-    def __init__(self, radius=5, parent = None, turn = 'upper', thrown = {'upper': 0, 'lower': 0}, last_action = None, n_turns = 1):
+    def __init__(self, radius=5, parent=None, turn='upper', thrown=None, last_action=None, n_turns=1):
+        if thrown is None:
+            thrown = {'upper': 0, 'lower': 0}
         self.radius = radius
         self.parent = parent
         self.turn = turn
@@ -42,14 +42,18 @@ class Board:
         children = []
         for move in moves:
             child = Board(radius=self.radius, parent=self, turn=self.turn, last_action=move, n_turns=self.n_turns + 1)
-            child.upper_pieces, child.lower_pieces, child.grid, child.thrown = copy.deepcopy(self.upper_pieces), copy.deepcopy(self.lower_pieces),\
-                                                                 copy.deepcopy(self.grid), copy.deepcopy(self.thrown)
+            child.upper_pieces = copy.deepcopy(self.upper_pieces)
+            child.lower_pieces = copy.deepcopy(self.lower_pieces)
+            child.grid = copy.deepcopy(self.grid)
+            child.thrown = copy.deepcopy(self.thrown)
+
             child.apply_move(move)
             if self.turn == 'upper':
                 child.turn = 'lower'
             else:
                 child.turn = 'upper'
                 child.battle()
+
             child.set_winner_terminal()
             children.append(child)
         return children
@@ -76,10 +80,10 @@ class Board:
         # analyse remaining tokens
         _WHAT_BEATS = {"r": "p", "p": "s", "s": "r"}
         up_throws = 9 - self.thrown["upper"]
-        up_tokens = [s.lower() for (s,v) in self.upper_pieces.items() if len(v) > 0]
+        up_tokens = [s.lower() for (s, v) in self.upper_pieces.items() if len(v) > 0]
         up_symset = set(up_tokens)
         lo_throws = 9 - self.thrown["lower"]
-        lo_tokens = [s.lower() for (s,v) in self.lower_pieces.items() if len(v) > 0]
+        lo_tokens = [s.lower() for (s, v) in self.lower_pieces.items() if len(v) > 0]
         lo_symset = set(lo_tokens)
         up_invinc = [
             s for s in up_symset
@@ -96,12 +100,12 @@ class Board:
 
         # condition 1: one player has no remaining throws or tokens
         if up_notoks and lo_notoks:
-            #draw: no remaining tokens or throws
+            # draw: no remaining tokens or throws
             self.terminal = True
             self.winner = None
             return
         if up_notoks:
-            #winner: lower
+            # winner: lower
             self.terminal = True
             self.winner = 'lower'
             return
@@ -113,7 +117,7 @@ class Board:
 
         # condition 2: both players have an invincible token
         if up_invinc and lo_invinc:
-            #draw: both players have an invincible token
+            # draw: both players have an invincible token
             self.terminal = True
             self.winner = None
             return
@@ -131,11 +135,11 @@ class Board:
             self.winner = 'lower'
             return
 
-        # TODO: Impletment this
+        # TODO: Implement this
         # condition 4: the same state has occurred for a 3rd time
-        #if self.history[state] >= 3:
-        #    self.result = "draw: same game state occurred for 3rd time"
-        #    return
+        # if self.history[state] >= 3:
+        #     self.result = "draw: same game state occurred for 3rd time"
+        #     return
 
         # condition 5: the players have had their 360th turn without end
         if self.n_turns >= 360:
@@ -148,23 +152,23 @@ class Board:
 
     def apply_move(self, move):
         """Applies a move. Moves piece regardless of whether move is valid."""
-        type, p1, p2 = move
+        move_type, p1, p2 = move
         if self.turn == 'lower':
-            tokens = ('r','p','s')
+            tokens = ('r', 'p', 's')
             pieces = self.lower_pieces
         else:
-            tokens = ('R','P','S')
+            tokens = ('R', 'P', 'S')
             pieces = self.upper_pieces
-        if type == 'SLIDE' or type == 'SWING':
+        if move_type == 'SLIDE' or move_type == 'SWING':
             # We dont get told which token is moving, just where its coming and going from, to work out which one it is, try all 3 and catch errors, t2 is true token
             t2 = None
-            #print("trying to remove on of", tokens, "from", self.grid[centered_to_array_coord(p1,self.radius)], "@", p1)
-            #print("on board")
-            #self.print_grid()
+            # print("trying to remove on of", tokens, "from", self.grid[centered_to_array_coord(p1,self.radius)], "@", p1)
+            # print("on board")
+            # self.print_grid()
             for t in tokens:
                 try:
-                    self.grid[centered_to_array_coord(p1,self.radius)].remove(t)
-                    self.grid[centered_to_array_coord(p2,self.radius)].append(t)
+                    self.grid[centered_to_array_coord(p1, self.radius)].remove(t)
+                    self.grid[centered_to_array_coord(p2, self.radius)].append(t)
                     t2 = t
                 except ValueError:
                     pass
@@ -172,15 +176,15 @@ class Board:
                 pieces[t2].remove(p1)
                 pieces[t2].append(p2)
             except KeyError:
-                print(pieces,t2,p1)
+                print(pieces, t2, p1)
                 time.sleep(20)
-        elif type == 'THROW':
+        elif move_type == 'THROW':
             self.thrown[self.turn] += 1
             if self.turn == 'upper':
-                self.grid[centered_to_array_coord(p2,self.radius)].append(p1.upper())
+                self.grid[centered_to_array_coord(p2, self.radius)].append(p1.upper())
                 pieces[p1.upper()].append(p2)
             elif self.turn == 'lower':
-                self.grid[centered_to_array_coord(p2,self.radius)].append(p1.lower())
+                self.grid[centered_to_array_coord(p2, self.radius)].append(p1.lower())
                 pieces[p1.lower()].append(p2)
 
     def battle(self):
@@ -228,8 +232,13 @@ class Board:
                                get_valid_slides(from_tile, self.radius)]
                 swing_moves = [("SWING", from_tile, to_tile) for to_tile in
                                get_valid_swings(from_tile, identifier, self.grid, self.radius)]
-                for i in (*slide_moves, *swing_moves): moves.append(i)
-        for i in self.get_valid_throws(): moves.append(i)
+
+                for i in (*slide_moves, *swing_moves):
+                    moves.append(i)
+
+        for i in self.get_valid_throws():
+            moves.append(i)
+
         return moves
 
     def get_valid_throws(self):
@@ -244,10 +253,12 @@ class Board:
             flip = -1
             identifiers = ('r', 'p', 's')
         for row in range(1, self.thrown[self.turn] + 2):
-            candidate_hexes = [(flip*(self.radius-row), i) for i in range(-(self.radius - 1),self.radius)]
-            valid_hexes = [candidate_hexes[i] for i in range(len(candidate_hexes)) if valid_centered_hex(candidate_hexes[i],self.radius)]
+            candidate_hexes = [(flip*(self.radius-row), i) for i in range(-(self.radius - 1), self.radius)]
+            valid_hexes = [candidate_hexes[i] for i in range(len(candidate_hexes))
+                           if valid_centered_hex(candidate_hexes[i], self.radius)]
             for hex in valid_hexes:
-                for i in [("THROW",j.lower(),hex) for j in identifiers]: throws.append(i)
+                for i in [("THROW", j.lower(), hex) for j in identifiers]:
+                    throws.append(i)
         return throws
 
     def find_random_child(self):
@@ -259,24 +270,24 @@ class Board:
     def reward(self):
         if not self.terminal:
             raise RuntimeError("reward called on nonterminal board")
-        if self.winner is self.turn:
+        if self.winner == self.turn:
             # It's your turn and you've already won. Should be impossible.
-            #debugboard = self
-            #for i in range(5):
-            #    debugboard.print_grid(compact=True)
-            #    debugboard = debugboard.parent
-            #print(self.winner,self.turn)
+            # debugboard = self
+            # for i in range(5):
+            #     debugboard.print_grid(compact=True)
+            #     debugboard = debugboard.parent
+            # print(self.winner,self.turn)
             return 1
-            print("reward called on unreachable board ??? ") #TODO: Investigate this
-        if (self.turn is 'lower' and self.winner is 'upper') or(self.turn is 'upper' and self.winner is 'lower'):
+            print("reward called on unreachable board ??? ") # TODO: Investigate this
+        if (self.turn == 'lower' and self.winner == 'upper') or (self.turn == 'upper' and self.winner == 'lower'):
             return 0  # Your opponent has just won. Bad.
         if self.winner is None:
             return 0.5  # Board is a tie
         # The winner is neither True, False, nor None
         raise RuntimeError(f"board has unknown winner type {self.winner}")
 
-    def is_terminal(board):
-        return board.terminal
+    def is_terminal(self):
+        return self.terminal
 
     def __eq__(self, other):
         return np.array_equal(self.grid, other.grid)
