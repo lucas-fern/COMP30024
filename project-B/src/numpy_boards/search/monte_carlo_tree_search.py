@@ -26,6 +26,9 @@ class MCTS:
         if node not in self.children:
             return node.find_random_child()
 
+        print(node.__hash__())
+        print(node, self.children[node])
+
         def score(n):
             if self.N[n] == 0:
                 return float("-inf")  # avoid unseen moves

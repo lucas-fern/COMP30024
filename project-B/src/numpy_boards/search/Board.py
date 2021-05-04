@@ -220,19 +220,41 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
         return Board(next_move_n, self.next_player_n, remaining_throws, new_board, moves)
 
+    def __deepcopy__(self, memo=None):
+        new_board = np.copy(self.board)
+        remaining_throws = deepcopy(self.remaining_throws)
+        moves = deepcopy(self.moves)
+
+        return Board(self.move_n, self.current_player_n, remaining_throws, new_board, moves)
+
     def is_terminal(self):
         return self.game_is_over
 
     def reward(self):
-        return random.randrange(2)  # TODO: implement a proper reward system
+        if self.winner is None:
+            return 0.5
+        if Board.PLAYER_ID == Board.PLAYER_NUMS['upper']:  # We are playing as upper
+            return 1 * int(self.winner == 'upper')
+        else:  # We are playing as lower
+            return 1 * int(self.winner == 'lower')
 
     def __hash__(self):
         moves_bytes = bytes(str(self.moves), encoding='utf-8')
         return (self.board.tobytes() + bytes(self.current_player_n) + moves_bytes).__hash__()
+        # return hash(str(self))
         # TODO: Figure out what needs to be hashed for MCTS
 
     def __eq__(node1, node2):
         return np.all(node1.board == node2.board) and \
                (node1.current_player_n == node2.current_player_n) and \
                (node1.moves == node2.moves)
+        # return str(node1) == str(node2)
         # TODO: Figure out what needs to be equality checked for MCTS
+
+    def __str__(self):
+        string = ''
+        for row in self.board:
+            string += str(row)
+        string += str(self.current_player_n) + str(self.moves)
+
+        return string

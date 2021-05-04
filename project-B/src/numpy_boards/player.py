@@ -1,3 +1,4 @@
+from copy import deepcopy
 from numpy_boards.search.Board import Board
 from numpy_boards.search.monte_carlo_tree_search import MCTS
 
@@ -42,6 +43,10 @@ class Player:
         and player_action is this instance's latest chosen action.
         """
         # put your code here
+        # TODO make the game board a new object each time so that the hash value of old boards doesn't change
+        assert self.player_num == Board.PLAYER_ID, "update called on opponents board"
+        new_game_board = deepcopy(self.game_board)
+        self.game_board = new_game_board
         self.game_board.apply_move(opponent_action, player_action)
         print(self.game_board.remaining_throws)
 
