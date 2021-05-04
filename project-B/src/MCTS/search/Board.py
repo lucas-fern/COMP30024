@@ -41,10 +41,13 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         self.move_n = move_n
         self.current_player_n = current_player_n  # TODO: make both players operate on the same board
 
+        # A dict containing the amount of throws each player has left. Keys are player numbers.
         self.remaining_throws = remaining_throws
 
-        self.moves = moves
-        if (moves is not None) and (current_player_n == Board.PLAYER_ID):  # If there are moves, and its our turn
+        self.moves = moves  # A tuple of moves which will eventually be actioned on the board.
+
+        # We apply the moves to the board if it is our players turn. This keeps our representation consistent.
+        if (moves is not None) and (current_player_n == Board.PLAYER_ID):
             assert len(moves) == 2, f"Invalid amount of moves for application {moves}."
             player_action, opponent_action = moves
 
@@ -54,22 +57,23 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
     @property
     def turn_n(self):
+        """Gets the RoPaSci360 turn number (1-indexed) based on the amount of moves that have been made."""
         return (self.move_n // 2) + 1
 
     @property
     def next_player_n(self):
+        """Gets the number of the next player based on the board's current player."""
         return (self.current_player_n + 1) % 2
 
     def get_winner(self):
+        """Returns a game over status and the winner of the game (if completed)."""
         # analyse remaining tokens
         _WHAT_BEATS = {"r": "p", "p": "s", "s": "r"}
         _TOKENS = np.array(['r', 'p', 's'])
         up_throws = self.remaining_throws[Board.PLAYER_NUMS['upper']]
-        # The list of up tokens is any token where the board has any nonzero elements in the column (0-2)
         up_tokens = ['r']*np.sum(self.board[:, 0]) + ['p']*np.sum(self.board[:, 1]) + ['s']*np.sum(self.board[:, 2])
         up_symset = set(up_tokens)
         lo_throws = self.remaining_throws[Board.PLAYER_NUMS['lower']]
-        # Similarly for lower tokens but with the right half of the board array
         lo_tokens = ['r']*np.sum(self.board[:, 3]) + ['p']*np.sum(self.board[:, 4]) + ['s']*np.sum(self.board[:, 5])
         lo_symset = set(lo_tokens)
         up_invinc = [
@@ -129,6 +133,7 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return self.board[:, n*3: n*3+3]
 
     def find_children(self):
+        """Finds all the valid children boards of a game board."""
         children = set()
         if self.game_is_over:  # If the game is finished then no moves can be made
             return children
@@ -140,6 +145,7 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return children
 
     def apply_move(self, opponent_action, player_action):
+        """Applies a set of two moves to the game board. Does not increment the move_n."""
         if Board.PLAYER_ID == 0:
             upper_move, lower_move = player_action, opponent_action
         else:
@@ -192,6 +198,7 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return all_moves
 
     def get_valid_throws(self):
+        """Gets all the valid throw moves for the current player on the board. Formatted according to the rules."""
         if self.remaining_throws[self.current_player_n] < 1:
             return []
 
@@ -207,13 +214,17 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return [('THROW', identifier, coord) for identifier, coord in product(('r', 'p', 's'), throwable_axial)]
 
     def find_random_child(self):
+        """Picks a random child of the current board."""
         random_move = random.choice(self.generate_moves())
 
         return self.create_child(random_move)
 
     def create_child(self, move):
+        """Generates a child of the current board with a specific move applied. Leaves it up to the child to determine
+        whether to apply the move (based on whether it is our player's turn)"""
         new_board = np.copy(self.board)
         remaining_throws = deepcopy(self.remaining_throws)
+        # TODO reconsider where this is placed. Maybe should increment in the apply_moves() function.
         next_move_n = self.move_n + 1  # TODO: make sure to consider this increments on each players turn
 
         moves = self.moves + (move,) if (self.moves and len(self.moves) == 1) else (move,)
@@ -221,6 +232,7 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return Board(next_move_n, self.next_player_n, remaining_throws, new_board, moves)
 
     def __deepcopy__(self, memo=None):
+        """Creates a deep copy of the board."""
         new_board = np.copy(self.board)
         remaining_throws = deepcopy(self.remaining_throws)
         moves = deepcopy(self.moves)
@@ -228,9 +240,13 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return Board(self.move_n, self.current_player_n, remaining_throws, new_board, moves)
 
     def is_terminal(self):
+        """Returns true if the board is in a terminal state. Else false."""
         return self.game_is_over
 
     def reward(self):
+        """Gives the reward to our player for a current terminal state."""
+        assert self.game_is_over, 'Asked for reward of non-terminal state'
+
         if self.winner is None:
             return 0.5
         if Board.PLAYER_ID == Board.PLAYER_NUMS['upper']:  # We are playing as upper
@@ -239,22 +255,16 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
             return 1 * int(self.winner == 'lower')
 
     def __hash__(self):
+        """Hashes the board based on the contents of the board array, current player, and stored moves."""
         moves_bytes = bytes(str(self.moves), encoding='utf-8')
         return (self.board.tobytes() + bytes(self.current_player_n) + moves_bytes).__hash__()
         # return hash(str(self))
         # TODO: Figure out what needs to be hashed for MCTS
 
     def __eq__(node1, node2):
+        """Checks for equality of boards based on the contents of the board array, current player, and stored moves."""
         return np.all(node1.board == node2.board) and \
                (node1.current_player_n == node2.current_player_n) and \
                (node1.moves == node2.moves)
         # return str(node1) == str(node2)
         # TODO: Figure out what needs to be equality checked for MCTS
-
-    def __str__(self):
-        string = ''
-        for row in self.board:
-            string += str(row)
-        string += str(self.current_player_n) + str(self.moves)
-
-        return string

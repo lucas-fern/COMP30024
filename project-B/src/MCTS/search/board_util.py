@@ -92,6 +92,7 @@ def get_adjacent_hexes(axial_coord):
 
 
 def valid_axial_hex(axial_coord):
+    """Validates a hex on the game board in the axial coordinate system."""
     return -RADIUS < sum(axial_coord) < RADIUS and \
            -RADIUS < axial_coord[0] < RADIUS and \
            -RADIUS < axial_coord[1] < RADIUS
