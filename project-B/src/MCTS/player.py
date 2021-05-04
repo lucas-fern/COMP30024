@@ -1,6 +1,6 @@
-from __name__.search.miniBoard import Board
-from __name__.monte_carlo_tree_search import MCTS, Node
-import random
+from copy import deepcopy
+from MCTS.search.Board import Board
+from MCTS.search.monte_carlo_tree_search import MCTS
 
 
 class Player:
@@ -16,9 +16,10 @@ class Player:
         # put your code here
         # Initialise the board
         self.tree = MCTS()
-        self.game_board = Board(radius=5)
-        self.identity = player
-        self.game_board.turn = self.identity
+        self.player_num = Board.PLAYER_NUMS[player]
+        Board.PLAYER_ID = self.player_num
+        # Model the game sequentially with our player always starting
+        self.game_board = Board(move_n=0, current_player_n=self.player_num, remaining_throws={0: 9, 1: 9})
 
     def action(self):
         """
@@ -26,14 +27,12 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-        self.game_board.turn = self.identity
         for i in range(5):
-            print(f"{i}/5")
+            # print(f"{i}/5")
             self.tree.do_rollout(self.game_board)
-        self.game_board = self.tree.choose(self.game_board)
-        move = self.game_board.last_action
+        next_board = self.tree.choose(self.game_board)
 
-        return move
+        return next_board.moves[-1]
 
     def update(self, opponent_action, player_action):
         """
@@ -44,12 +43,10 @@ class Player:
         and player_action is this instance's latest chosen action.
         """
         # put your code here
-        self.game_board.apply_move(opponent_action)
-        self.game_board.n_turns += 1
-        if self.game_board.turn == 'upper':
-            self.game_board.turn = 'lower'
-        else:
-            self.game_board.turn = 'upper'
+        # TODO make the game board a new object each time so that the hash value of old boards doesn't change
+        assert self.player_num == Board.PLAYER_ID, "update called on opponents board"
+        new_game_board = deepcopy(self.game_board)
+        self.game_board = new_game_board
+        self.game_board.apply_move(opponent_action, player_action)
 
-
-
+        self.game_board.move_n += 2  # Applied 2 moves to the game board
