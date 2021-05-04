@@ -2,8 +2,8 @@ import numpy as np
 import random
 from copy import deepcopy
 from itertools import product
-from numpy_boards.search.board_util import *
-from numpy_boards.search.monte_carlo_tree_search import Node
+from MCTS.search.board_util import *
+from MCTS.search.monte_carlo_tree_search import Node
 
 
 class Board(Node):  # Putting Node in the brackets because this Inherits from Node class. Forces method implementation.

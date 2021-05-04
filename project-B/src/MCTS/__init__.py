@@ -1,1 +1,1 @@
-from numpy_boards.player import Player
+from MCTS.player import Player

@@ -1,6 +1,6 @@
 from copy import deepcopy
-from numpy_boards.search.Board import Board
-from numpy_boards.search.monte_carlo_tree_search import MCTS
+from MCTS.search.Board import Board
+from MCTS.search.monte_carlo_tree_search import MCTS
 
 
 class Player:
