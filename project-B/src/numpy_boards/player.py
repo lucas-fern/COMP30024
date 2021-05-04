@@ -48,6 +48,5 @@ class Player:
         new_game_board = deepcopy(self.game_board)
         self.game_board = new_game_board
         self.game_board.apply_move(opponent_action, player_action)
-        print(self.game_board.remaining_throws)
 
         self.game_board.move_n += 2  # Applied 2 moves to the game board
