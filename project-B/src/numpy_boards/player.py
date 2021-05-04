@@ -3,11 +3,6 @@ from numpy_boards.search.monte_carlo_tree_search import MCTS
 
 
 class Player:
-    PLAYER_NUMS = {
-        'upper': 0,
-        'lower': 1
-    }
-
     def __init__(self, player):
         """
         Called once at the beginning of a game to initialise this player.
@@ -20,8 +15,10 @@ class Player:
         # put your code here
         # Initialise the board
         self.tree = MCTS()
-        self.player_num = Player.PLAYER_NUMS[player]
-        self.game_board = Board(turn_n=1, current_player_n=self.player_num, remaining_throws={0: 9, 1: 9})
+        self.player_num = Board.PLAYER_NUMS[player]
+        Board.PLAYER_ID = self.player_num
+        # Model the game sequentially with our player always starting
+        self.game_board = Board(move_n=0, current_player_n=self.player_num, remaining_throws={0: 9, 1: 9})
 
     def action(self):
         """
@@ -29,13 +26,12 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-        self.game_board.current_player_n = self.player_num
         for i in range(5):
             print(f"{i}/5")
             self.tree.do_rollout(self.game_board)
-        self.game_board = self.tree.choose(self.game_board)
+        next_board = self.tree.choose(self.game_board)
 
-        return self.game_board.move
+        return next_board.moves[-1]
 
     def update(self, opponent_action, player_action):
         """
@@ -46,7 +42,7 @@ class Player:
         and player_action is this instance's latest chosen action.
         """
         # put your code here
+        self.game_board.apply_move(opponent_action, player_action)
+        print(self.game_board.remaining_throws)
 
-        self.game_board.apply_move(opponent_action)
-        self.game_board.apply_move(player_action, battle=True)
-        self.game_board.turn_n += 1
+        self.game_board.move_n += 2  # Applied 2 moves to the game board

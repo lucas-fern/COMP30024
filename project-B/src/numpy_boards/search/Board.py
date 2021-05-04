@@ -1,7 +1,7 @@
 import numpy as np
 import random
+from copy import deepcopy
 from itertools import product
-from numpy_boards import Player
 from numpy_boards.search.board_util import *
 from numpy_boards.search.monte_carlo_tree_search import Node
 
@@ -16,21 +16,13 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         's': 2
     }
     IDENTIFIERS = ('r', 'p', 's')
+    PLAYER_NUMS = {
+        'upper': 0,
+        'lower': 1
+    }
+    PLAYER_ID = None
 
-    def __init__(self, turn_n, current_player_n, remaining_throws, board=None, move=None):
-        # self.token_loc = {
-        #     'upper': {
-        #         'r': [],
-        #         'p': [],
-        #         's': []
-        #     },
-        #     'lower': {
-        #         'r': [],
-        #         'p': [],
-        #         's': []
-        #     }
-        # }
-
+    def __init__(self, move_n, current_player_n, remaining_throws, board=None, moves=None):
         # Board is represented as a 61 x 6 matrix with counts of tokens on each of the hexes. 0-60 hexes are counted top
         # to bottom, left to right:
         #
@@ -41,30 +33,42 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         #  [0, 0, 0, 0, 2, 0],
         #  [0, 0, 0, 0, 0, 0]]
         # ^ represents one S on hex 0. 2 p's on hex 59
+        self.board = board
         if board is None:
             # Use a tiny 8 bit unsigned int (0-64)
             self.board = np.zeros(shape=(Board.N_HEXES, Board.HEX_OPTIONS), dtype=np.uint8)
 
-        self.turn_n = turn_n
+        self.move_n = move_n
         self.current_player_n = current_player_n  # TODO: make both players operate on the same board
 
         self.remaining_throws = remaining_throws
 
-        if move is not None:
-            self.move = move
-            self.apply_move(move)
+        self.moves = moves
+        if (moves is not None) and (current_player_n == Board.PLAYER_ID):  # If there are moves, and its our turn
+            assert len(moves) == 2, f"Invalid amount of moves for application {moves}."
+            player_action, opponent_action = moves
+
+            self.apply_move(opponent_action, player_action)
 
         self.game_is_over, self.winner = self.get_winner()
+
+    @property
+    def turn_n(self):
+        return (self.move_n // 2) + 1
+
+    @property
+    def next_player_n(self):
+        return (self.current_player_n + 1) % 2
 
     def get_winner(self):
         # analyse remaining tokens
         _WHAT_BEATS = {"r": "p", "p": "s", "s": "r"}
         _TOKENS = np.array(['r', 'p', 's'])
-        up_throws = self.remaining_throws[Player.PLAYER_NUMS['upper']]
+        up_throws = self.remaining_throws[Board.PLAYER_NUMS['upper']]
         # The list of up tokens is any token where the board has any nonzero elements in the column (0-2)
         up_tokens = _TOKENS[np.nonzero(np.any(self.board[:, :3] != 0, axis=0))[0].tolist()]
         up_symset = set(up_tokens)
-        lo_throws = self.remaining_throws[Player.PLAYER_NUMS['lower']]
+        lo_throws = self.remaining_throws[Board.PLAYER_NUMS['lower']]
         # Similarly for lower tokens but with the right half of the board array
         lo_tokens = _TOKENS[np.nonzero(np.any(self.board[:, 3:] != 0, axis=0))[0].tolist()]
         lo_symset = set(lo_tokens)
@@ -129,41 +133,45 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         if self.game_is_over:  # If the game is finished then no moves can be made
             return children
 
-        next_player_n = (self.current_player_n + 1) % 2
-        next_turn_n = self.turn_n + 1  # TODO: make sure to consider this increments on each players turn
-
         for move in self.generate_moves():
-            new_board = np.copy(self.board)
-            children |= Board(next_turn_n, next_player_n, self.remaining_throws, new_board, move)
+            new_child = self.create_child(move)
+            children.add(new_child)
 
-    def apply_move(self, move, battle=False):
-        # We apply moves after creating a new board. The player will have been updated, so get the previous player num.
-        previous_player = (self.current_player_n + 1) % 2
-        players_pieces = self.player_n_pieces(previous_player)
+        return children
 
-        if move[0] == "THROW":
-            self.remaining_throws[previous_player] -= 1
-            identifier = move[1]
-            linear_coord = AXIAL_TO_LINEAR[move[2]]
-            # Add a piece to the linear coordinate board, in the column of the relevant piece
-            players_pieces[linear_coord, Board.IDENTIFIERS.index(identifier)] += 1
-
+    def apply_move(self, opponent_action, player_action):
+        if Board.PLAYER_ID == 0:
+            upper_move, lower_move = player_action, opponent_action
         else:
-            linear_from = AXIAL_TO_LINEAR[move[1]]
-            linear_to = AXIAL_TO_LINEAR[move[2]]
+            upper_move, lower_move = opponent_action, player_action
 
-            # Only one type of token will have an entry in the row. Decrease the number at that index and add it to new
-            token_type = players_pieces[linear_from].nonzero()[0]
-            players_pieces[linear_from, token_type] -= 1
-            players_pieces[linear_to, token_type] += 1
+        for player_n, move in enumerate((upper_move, lower_move)):
+            players_pieces = self.player_n_pieces(player_n)
+            if move[0] == "THROW":
+                self.remaining_throws[player_n] -= 1
+                identifier = move[1]
+                linear_coord = AXIAL_TO_LINEAR[move[2]]
+                # Add a piece to the linear coordinate board, in the column of the relevant piece
+                players_pieces[linear_coord, Board.IDENTIFIERS.index(identifier)] += 1
 
-        if battle:
-            self.battle()  # TODO: figure out when to battle and do it with the moves
+            else:
+                linear_from = AXIAL_TO_LINEAR[move[1]]
+                linear_to = AXIAL_TO_LINEAR[move[2]]
+
+                # Only one type of token will have an entry in the row.
+                # Decrease the number at that index and add it to new
+                token_type = players_pieces[linear_from].nonzero()[0]
+                players_pieces[linear_from, token_type] -= 1
+                players_pieces[linear_to, token_type] += 1
+
+        # Always battle since we are always applying both players moves at once
+        self.battle()  # TODO: figure out when to battle and do it with the moves
 
     def battle(self):
         """Lucas's magnum opus. Battles the tokens on each hex."""
         for hex in self.board:
-            kill_vector = np.asarray(([int(not bool(hex[i+1] or hex[(i+4) % 6])) for i in range(3)] * 2))
+            kill_vector = np.asarray(([int(not bool(hex[i+1] or hex[(i+4) % 6])) for i in range(3)] * 2),
+                                     dtype=np.uint8)
             hex *= kill_vector
 
     def generate_moves(self) -> list:
@@ -184,6 +192,9 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return all_moves
 
     def get_valid_throws(self):
+        if self.remaining_throws[self.current_player_n] < 1:
+            return []
+
         # Calculate the number of hexes the player can throw on by summing the number of hexes in each available row
         n_throwable = sum(Board.HEXES_PER_ROW[:10-self.remaining_throws[self.current_player_n]])
         # If the team is Upper, all the throwable tokens are starting from linear coord 0 and counting up. Lower counts
@@ -197,21 +208,31 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
     def find_random_child(self):
         random_move = random.choice(self.generate_moves())
+
+        return self.create_child(random_move)
+
+    def create_child(self, move):
         new_board = np.copy(self.board)
+        remaining_throws = deepcopy(self.remaining_throws)
+        next_move_n = self.move_n + 1  # TODO: make sure to consider this increments on each players turn
 
-        next_player_n = (self.current_player_n + 1) % 2
-        next_turn_n = self.turn_n + 1  # TODO: make sure to consider this increments on each players turn
+        moves = self.moves + (move,) if (self.moves and len(self.moves) == 1) else (move,)
 
-        return Board(next_turn_n, next_player_n, self.remaining_throws, new_board, random_move)
+        return Board(next_move_n, self.next_player_n, remaining_throws, new_board, moves)
 
     def is_terminal(self):
         return self.game_is_over
 
     def reward(self):
-        return 1  # TODO: implement a proper reward system
+        return random.randrange(2)  # TODO: implement a proper reward system
 
     def __hash__(self):
-        return self.board.tobytes().__hash__()  # TODO: Figure out what needs to be hashed for MCTS
+        moves_bytes = bytes(str(self.moves), encoding='utf-8')
+        return (self.board.tobytes() + bytes(self.current_player_n) + moves_bytes).__hash__()
+        # TODO: Figure out what needs to be hashed for MCTS
 
     def __eq__(node1, node2):
-        return node1.board == node2.board  # TODO: Figure out what needs to be equality checked for MCTS
+        return np.all(node1.board == node2.board) and \
+               (node1.current_player_n == node2.current_player_n) and \
+               (node1.moves == node2.moves)
+        # TODO: Figure out what needs to be equality checked for MCTS

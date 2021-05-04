@@ -45,7 +45,6 @@ class Player:
         """
         # put your code here
         self.game_board.apply_move(opponent_action)
-        self.game_board.battle()
         self.game_board.n_turns += 1
         if self.game_board.turn == 'upper':
             self.game_board.turn = 'lower'
