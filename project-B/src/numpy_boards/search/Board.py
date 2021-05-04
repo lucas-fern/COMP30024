@@ -66,11 +66,11 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         _TOKENS = np.array(['r', 'p', 's'])
         up_throws = self.remaining_throws[Board.PLAYER_NUMS['upper']]
         # The list of up tokens is any token where the board has any nonzero elements in the column (0-2)
-        up_tokens = _TOKENS[np.nonzero(np.any(self.board[:, :3] != 0, axis=0))[0].tolist()]
+        up_tokens = ['r']*np.sum(self.board[:, 0]) + ['p']*np.sum(self.board[:, 1]) + ['s']*np.sum(self.board[:, 2])
         up_symset = set(up_tokens)
         lo_throws = self.remaining_throws[Board.PLAYER_NUMS['lower']]
         # Similarly for lower tokens but with the right half of the board array
-        lo_tokens = _TOKENS[np.nonzero(np.any(self.board[:, 3:] != 0, axis=0))[0].tolist()]
+        lo_tokens = ['r']*np.sum(self.board[:, 3]) + ['p']*np.sum(self.board[:, 4]) + ['s']*np.sum(self.board[:, 5])
         lo_symset = set(lo_tokens)
         up_invinc = [
             s for s in up_symset if (lo_throws == 0) and (_WHAT_BEATS[s] not in lo_symset)

@@ -28,7 +28,7 @@ class Player:
         """
         # put your code here
         for i in range(5):
-            print(f"{i}/5")
+            # print(f"{i}/5")
             self.tree.do_rollout(self.game_board)
         next_board = self.tree.choose(self.game_board)
 
