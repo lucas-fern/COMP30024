@@ -1,6 +1,6 @@
 from copy import deepcopy
 from alt_agent.search.Board import Board
-import math
+import math, random
 
 
 class Player:
@@ -20,10 +20,17 @@ class Player:
         self.game_board = Board(move_n=0, current_player_n=self.player_num, remaining_throws={0: 9, 1: 9})
 
         #TEST
-        
+
         #self.game_board = Board(move_n=10, current_player_n=self.player_num, remaining_throws={0: 9, 1: 9})
-        #self.game_board.apply_move(('THROW', 'p', (4, -2)),('THROW', 'p', (-3, 2)))
-        #self.game_board.apply_move(('THROW', 's', (4, -2)), ('THROW', 'p', (-2, 2)))
+        #self.game_board.apply_move(('THROW', 'p', (-4, 4)), ('THROW', 'p', (4, 0)))
+        #self.game_board.apply_move(('THROW', 's', (-3, 3)), ('THROW', 's', (3, 0)))
+        #self.game_board.apply_move(('THROW', 'r', (-2, 2)), ('THROW', 'p', (2, 0)))
+        #self.game_board.apply_move(('THROW', 's', (-1, 1)), ('THROW', 'r', (1, 0)))
+        #self.game_board.apply_move(('THROW', 's', (0, 0)), ('THROW', 's', (0, 0)))
+        #self.game_board.apply_move(('THROW', 'p', (1, -1)), ('THROW', 'p', (-1, 0)))
+        #self.game_board.apply_move(('THROW', 'r', (2, -2)), ('THROW', 'r', (-2, 0)))
+        #self.game_board.apply_move(('THROW', 'r', (3, -3)), ('THROW', 's', (-3, 0)))
+        #self.game_board.apply_move(('THROW', 's', (4, -4)), ('THROW', 'p', (-4, 0)))
         #print(self.game_board.eval)
         #print(self.game_board.board)
     def action(self):
@@ -32,16 +39,29 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-        children = self.game_board.find_children()
-        best_move = None
-        best_score = -math.inf
-        for child in children:
-            score = child.find_NM_score(depth=2, alpha = -math.inf, beta = math.inf, player_num = child.current_player_n)
-            print(child.moves, score)
-            if score > best_score:
-                print(best_score,best_move)
-                best_move, best_score = child.moves[-1], score
-        return best_move
+        if self.game_board.move_n >= 21:
+            print("Using Negamax")
+            print("Evaluation:", self.game_board.eval)
+            # Find all children
+            children = self.game_board.find_children()
+            best_move = None
+            # best score is either positive or negative inf depending on whether we maximise or minimise
+            best_score = -math.inf*(1 - 2*self.game_board.current_player_n)
+            for child in children:
+                # Use negamax to find the score for the child node
+                score = child.find_NM_score(depth=2, alpha = -math.inf, beta = math.inf, player_num = child.current_player_n)
+                #print(child.moves, score)
+                # update best move
+                if ((score > best_score) and self.game_board.current_player_n == Board.PLAYER_NUMS['upper']) or \
+                        ((-score < best_score) and self.game_board.current_player_n == Board.PLAYER_NUMS['lower']) :
+                    #print(best_score,best_move)
+                    best_move, best_score = child.moves[-1], score
+            return best_move
+        else:
+            print("Random")
+            children = list(self.game_board.find_children())
+            child = random.choice(children)
+            return child.moves[-1]
 
     def update(self, opponent_action, player_action):
         """
