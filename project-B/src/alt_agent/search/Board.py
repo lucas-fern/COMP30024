@@ -75,7 +75,7 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         """Gets the number of the next player based on the board's current player."""
         return (self.current_player_n + 1) % 2
 
-    def find_NM_score(self, depth = 0, alpha = -math.inf, beta = math.inf, player_num = None):
+    def find_NM_score(self, depth=0, alpha=-math.inf, beta=math.inf, player_num=None):
         """Performs Negamax, returns value of a node"""
         if depth == 0 or self.game_is_over:
             return self.eval
@@ -84,14 +84,14 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
         for child in self.find_children():
             #print(child.moves)
-            value = max(value, child.find_NM_score(depth = depth - 1, alpha = -beta, beta = -alpha, player_num = (player_num + 1) % 2))
+            value = max(value, child.find_NM_score(
+                depth=depth - 1, alpha=-beta, beta=-alpha, player_num=(player_num + 1) % 2))
             alpha = max(alpha, value)
             if alpha >= beta:
                 #print("did a thing")
                 break
 
         return -value
-
 
     def get_winner(self):
         """Returns a game over status and the winner of the game (if completed)."""

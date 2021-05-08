@@ -49,7 +49,7 @@ class Player:
             best_score = -math.inf*(1 - 2*self.game_board.current_player_n)
             for child in children:
                 # Use negamax to find the score for the child node
-                score = child.find_NM_score(depth=2, alpha = -math.inf, beta = math.inf, player_num = child.current_player_n)
+                score = child.find_NM_score(depth=5, alpha = -math.inf, beta = math.inf, player_num = child.current_player_n)
                 #print(child.moves, score)
                 # update best move
                 if ((score > best_score) and self.game_board.current_player_n == Board.PLAYER_NUMS['upper']) or \
