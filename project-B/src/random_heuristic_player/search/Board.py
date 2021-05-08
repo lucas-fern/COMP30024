@@ -46,12 +46,8 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
         self.moves = moves  # A tuple of moves which will eventually be actioned on the board.
 
-        # We apply the moves to the board if it is our players turn. This keeps our representation consistent.
-        if (moves is not None) and (current_player_n == Board.PLAYER_ID):
-            assert len(moves) == 2, f"Invalid amount of moves for application {moves}."
-            player_action, opponent_action = moves
-
-            self.apply_move(opponent_action, player_action)
+        if moves:
+            self.apply_move(None, moves[-1])
 
         self.n_pieces = np.sum(board, axis=0)
 
@@ -134,7 +130,8 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
                 total_min_distance += min_predator_distance * n_toks
 
-        assert total_tokens != 0, "Tried to calculate distances between nonexistent tokens"
+        if total_tokens == 0:
+            return 0
 
         # Return the average distance
         return total_min_distance / total_tokens
@@ -227,22 +224,24 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
         for player_n, move in enumerate((upper_move, lower_move)):
             players_pieces = self.player_n_pieces(player_n)
-            if move[0] == "THROW":
-                self.remaining_throws[player_n] -= 1
-                identifier = move[1]
-                linear_coord = AXIAL_TO_LINEAR[move[2]]
-                # Add a piece to the linear coordinate board, in the column of the relevant piece
-                players_pieces[linear_coord, Board.IDENTIFIERS.index(identifier)] += 1
 
-            else:
-                linear_from = AXIAL_TO_LINEAR[move[1]]
-                linear_to = AXIAL_TO_LINEAR[move[2]]
+            if move is not None:
+                if move[0] == "THROW":
+                    self.remaining_throws[player_n] -= 1
+                    identifier = move[1]
+                    linear_coord = AXIAL_TO_LINEAR[move[2]]
+                    # Add a piece to the linear coordinate board, in the column of the relevant piece
+                    players_pieces[linear_coord, Board.IDENTIFIERS.index(identifier)] += 1
 
-                # Only one type of token will have an entry in the row.
-                # Decrease the number at that index and add it to new
-                token_type = players_pieces[linear_from].nonzero()[0]
-                players_pieces[linear_from, token_type] -= 1
-                players_pieces[linear_to, token_type] += 1
+                else:
+                    linear_from = AXIAL_TO_LINEAR[move[1]]
+                    linear_to = AXIAL_TO_LINEAR[move[2]]
+
+                    # Only one type of token will have an entry in the row.
+                    # Decrease the number at that index and add it to new
+                    token_type = players_pieces[linear_from].nonzero()[0]
+                    players_pieces[linear_from, token_type] -= 1
+                    players_pieces[linear_to, token_type] += 1
 
         # Always battle since we are always applying both players moves at once
         self.battle()  # TODO: figure out when to battle and do it with the moves
