@@ -225,15 +225,16 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
     def generate_moves(self) -> list:
         """Generates all possible moves for one player."""
-        slide_moves = swing_moves = ()
+        slide_moves = []
+        swing_moves = []
         player_pieces = self.player_n_pieces(self.current_player_n)
         for i, row in enumerate(player_pieces):
             axial_coord = LINEAR_TO_AXIAL[i]
             if np.any(row):
-                slide_moves = [("SLIDE", axial_coord, to_tile) for to_tile in
-                               get_valid_slides(axial_coord)]
-                swing_moves = [("SWING", axial_coord, to_tile) for to_tile in
-                               get_valid_swings(axial_coord, player_pieces)]
+                slide_moves += [("SLIDE", axial_coord, to_tile) for to_tile in
+                                get_valid_slides(axial_coord)]
+                swing_moves += [("SWING", axial_coord, to_tile) for to_tile in
+                                get_valid_swings(axial_coord, player_pieces)]
 
         throw_moves = self.get_valid_throws()
         all_moves = [*slide_moves, *swing_moves, *throw_moves]

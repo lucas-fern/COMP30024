@@ -28,9 +28,6 @@ class Player:
         children = self.game_board.find_children()
         best_child = max(children, key=lambda x: x.heuristic)
 
-        for child in children:
-            print(child.moves[-1], child.heuristic)
-
         return best_child.moves[-1]
 
     def update(self, opponent_action, player_action):
