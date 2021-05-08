@@ -1,5 +1,5 @@
 from copy import deepcopy
-from alt_agent.search.Board import Board
+from negamax_agent.search.Board import Board
 import math, random
 
 
