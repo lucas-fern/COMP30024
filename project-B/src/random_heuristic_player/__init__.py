@@ -1,1 +1,0 @@
-from random_heuristic_player.player import Player

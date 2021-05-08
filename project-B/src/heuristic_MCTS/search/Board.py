@@ -1,9 +1,8 @@
-import numpy as np
 import random
 from copy import deepcopy
 from itertools import product
-from MCTS.search.board_util import *
-from MCTS.search.monte_carlo_tree_search import Node
+from heuristic_MCTS.search.board_util import *
+from heuristic_MCTS.search.monte_carlo_tree_search import Node
 
 
 class Board(Node):  # Putting Node in the brackets because this Inherits from Node class. Forces method implementation.
@@ -46,8 +45,12 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
         self.moves = moves  # A tuple of moves which will eventually be actioned on the board.
 
-        if moves:
-            self.apply_move(None, moves[-1])
+        # We apply the moves to the board if it is our players turn. This keeps our representation consistent.
+        if (moves is not None) and (current_player_n == Board.PLAYER_ID):
+            assert len(moves) == 2, f"Invalid amount of moves for application {moves}."
+            player_action, opponent_action = moves
+
+            self.apply_move(opponent_action, player_action)
 
         self.n_pieces = np.sum(board, axis=0)
 
@@ -67,9 +70,10 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
     @property
     def heuristic(self):
+        # TODO: Tune the weight parameters for optimal play. Perhaps through machine learning?
         _WEIGHTS = {
             'throw': 1,
-            'kills': 5,
+            'kills': 10,
             'offensive distance': 5,
             'defensive distance': 3,
             'diversity': 1
@@ -85,8 +89,8 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         kills_score = (9 - self.remaining_throws[opponent_player_n] - opponent_n_toks) / 9
 
         # The token distance scores reward distancing our pieces from attackers and gaining on enemies.
-        offensive_dist_score = 1 - (self.get_average_dist('offensive') / 10)
-        defensive_dist_score = self.get_average_dist('defensive') / 10
+        offensive_dist_score = 1 - (self.get_average_dist('offensive') / 4)
+        defensive_dist_score = self.get_average_dist('defensive') / 4
 
         # The diversity score rewards heterogeneous piece placement
         our_pieces = self.n_pieces[Board.PLAYER_ID * 3: Board.PLAYER_ID * 3 + 3]
@@ -124,9 +128,11 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
                 n_toks = prey_col[prey]
                 total_tokens += n_toks
 
-                min_predator_distance = 10  # Tunable parameter: The placeholder distance if no attackers
+                min_predator_distance = 4  # Tunable parameter: The placeholder distance if no attackers
                 for predator in nonzero_predators:
-                    min_predator_distance = min(min_predator_distance, linear_coord_distance(prey, predator))
+                    # TODO: Determine whether it's better to take log2(1+dist) or just use dist
+                    min_predator_distance = min(min_predator_distance, np.log2(
+                        1 + linear_coord_distance(prey, predator)))
 
                 total_min_distance += min_predator_distance * n_toks
 
@@ -204,14 +210,25 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
         return self.board[:, n*3: n*3+3]
 
     def find_children(self):
-        """Finds all the valid children boards of a game board."""
+        """Finds the best N valid children boards of a game board."""
+        _N = 8
+
         children = set()
         if self.game_is_over:  # If the game is finished then no moves can be made
             return children
 
+        all_children = []
         for move in self.generate_moves():
             new_child = self.create_child(move)
-            children.add(new_child)
+            all_children.append(new_child)
+
+        def get_heuristic(board):
+            temp = deepcopy(board)
+            temp.apply_move(None, temp.moves[-1])
+            return temp.heuristic
+
+        top_n = sorted(all_children, key=get_heuristic, reverse=True)[:_N]
+        children.update(top_n)
 
         return children
 
@@ -289,16 +306,15 @@ class Board(Node):  # Putting Node in the brackets because this Inherits from No
 
     def find_random_child(self):
         """Picks a random child of the current board."""
-        random_move = random.choice(self.generate_moves())
 
-        return self.create_child(random_move)
+        return random.choice(list(self.find_children()))
 
     def create_child(self, move):
         """Generates a child of the current board with a specific move applied. Leaves it up to the child to determine
         whether to apply the move (based on whether it is our player's turn)"""
         new_board = np.copy(self.board)
         remaining_throws = deepcopy(self.remaining_throws)
-        # TODO reconsider where this is placed. Maybe should increment in the apply_moves() function.
+        # TODO: reconsider where this is placed. Maybe should increment in the apply_moves() function.
         next_move_n = self.move_n + 1  # TODO: make sure to consider this increments on each players turn
 
         moves = self.moves + (move,) if (self.moves and len(self.moves) == 1) else (move,)

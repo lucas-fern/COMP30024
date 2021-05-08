@@ -1,5 +1,6 @@
-from random_heuristic_player.search.Board import Board
 from copy import deepcopy
+from MCTS.search.Board import Board
+from MCTS.search.monte_carlo_tree_search import MCTS
 
 
 class Player:
@@ -14,6 +15,7 @@ class Player:
         """
         # put your code here
         # Initialise the board
+        self.tree = MCTS()
         self.player_num = Board.PLAYER_NUMS[player]
         Board.PLAYER_ID = self.player_num
         # Model the game sequentially with our player always starting
@@ -25,10 +27,12 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-        children = self.game_board.find_children()
-        best_child = max(children, key=lambda x: x.heuristic)
+        for i in range(5):
+            # print(f"{i}/5")
+            self.tree.do_rollout(self.game_board)
+        next_board = self.tree.choose(self.game_board)
 
-        return best_child.moves[-1]
+        return next_board.moves[-1]
 
     def update(self, opponent_action, player_action):
         """
@@ -39,7 +43,7 @@ class Player:
         and player_action is this instance's latest chosen action.
         """
         # put your code here
-        # TODO make the game board a new object each time so that the hash value of old boards doesn't change
+
         assert self.player_num == Board.PLAYER_ID, "update called on opponents board"
         new_game_board = deepcopy(self.game_board)
         self.game_board = new_game_board
