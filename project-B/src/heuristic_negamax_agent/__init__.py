@@ -1,0 +1,1 @@
+from heuristic_negamax_agent.player import Player
