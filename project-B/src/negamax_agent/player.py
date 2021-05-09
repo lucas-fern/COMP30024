@@ -39,7 +39,7 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-        if self.game_board.move_n >= 21:
+        if self.game_board.move_n >= 6:
             print("Using Negamax")
             print("Evaluation:", self.game_board.eval)
             # Find all children
