@@ -1,4 +1,4 @@
-import random
+import random, math
 from copy import deepcopy
 from itertools import product
 from heuristic_agent.search.board_util import *
@@ -64,7 +64,52 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
             return (current + 1) % 2
 
     @property
-    def heuristic(self):
+    def heuristic_ZS(self):
+        h1 = self.heuristic()
+        h2 = self.heuristic(True)
+        return h1 - h2
+
+    def find_NM_score(self, depth=0, alpha=-math.inf, beta=math.inf, player_num=None):
+        """Performs Negamax, returns value of a node"""
+        if depth == 0 or self.game_is_over:
+            return self.heuristic_ZS
+
+        value = -math.inf
+        for child in self.find_top_n_children():
+            value = max(value, -child.find_NM_score(
+                depth=depth - 1, alpha=-beta, beta=-alpha, player_num=(player_num + 1) % 2))
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+
+        return value
+
+    def find_top_n_children(self):
+        """Finds the best N valid children boards of a game board."""
+        _N = 8
+
+        children = set()
+        if self.game_is_over:  # If the game is finished then no moves can be made
+            return children
+
+        all_children = []
+        for move in self.generate_moves():
+            new_child = self.create_child(move)
+            all_children.append(new_child)
+
+        def get_heuristic(board):
+            temp = deepcopy(board)
+            temp.apply_move(None, temp.moves[-1])
+            temp.n_pieces = np.sum(temp.board, axis=0)
+            temp.battle()
+            return temp.heuristic_ZS
+
+        top_n = sorted(all_children, key=get_heuristic, reverse=True)[:_N]
+        children.update(top_n)
+
+        return top_n #children
+
+    def heuristic(self, switch = False):
         # TODO: Tune the weight parameters for optimal play. Perhaps through machine learning?
         _WEIGHTS = {
             'throw': 1,
@@ -73,6 +118,9 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
             'defensive distance': 3,
             'diversity': 1
         }
+        #print(Board.PLAYER_ID)
+        if switch:
+            Board.PLAYER_ID = (Board.PLAYER_ID + 1) % 2
 
         # Generate all the scores as numbers between 0 and 1
         # The throw score rewards having tokens left to throw
@@ -93,6 +141,9 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
         props = our_pieces / np.sum(our_pieces)
         entropy = -np.sum(props * np.log2(props))
         diversity_score = entropy / -np.log2(1/3)
+
+        if switch:
+            Board.PLAYER_ID = (Board.PLAYER_ID + 1) % 2
 
         return throw_score * _WEIGHTS['throw'] + \
             kills_score * _WEIGHTS['kills'] + \

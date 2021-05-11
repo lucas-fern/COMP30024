@@ -116,6 +116,7 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
 
     def get_average_dist(self, type_):
         option = Board.PLAYER_ID
+        print(Board.PLAYER_ID)
         if type_ == 'defensive':
             option = (option + 1) % 2
 
@@ -154,20 +155,17 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
     def find_NM_score(self, depth=0, alpha=-math.inf, beta=math.inf, player_num=None):
         """Performs Negamax, returns value of a node"""
         if depth == 0 or self.game_is_over:
-            return self.heuristic
+            return self.zero_sum_heuristic
 
         value = -math.inf
-
         for child in self.find_top_n_children():
-            #print(child.moves)
-            value = max(value, child.find_NM_score(
+            value = max(value, -child.find_NM_score(
                 depth=depth - 1, alpha=-beta, beta=-alpha, player_num=(player_num + 1) % 2))
             alpha = max(alpha, value)
             if alpha >= beta:
-                #print("did a thing")
                 break
 
-        return -value
+        return value
 
     def get_winner(self):
         """Returns a game over status and the winner of the game (if completed)."""
