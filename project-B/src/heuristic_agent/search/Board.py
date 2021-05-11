@@ -225,7 +225,7 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
 
         return children
 
-    def apply_move(self, opponent_action, player_action):
+    def apply_move(self, opponent_action, player_action, no_battle = False):
         """Applies a set of two moves to the game board. Does not increment the move_n."""
         if Board.PLAYER_ID == 0:
             upper_move, lower_move = player_action, opponent_action
@@ -254,7 +254,8 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
                     players_pieces[linear_to, token_type] += 1
 
         # Always battle since we are always applying both players moves at once
-        self.battle()  # TODO: figure out when to battle and do it with the moves
+        if not no_battle:
+            self.battle()  # TODO: figure out when to battle and do it with the moves
 
     def battle(self):
         """Lucas's magnum opus. Battles the tokens on each hex."""

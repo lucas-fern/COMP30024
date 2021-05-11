@@ -162,7 +162,7 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
     def find_NM_score(self, depth=0, alpha=-math.inf, beta=math.inf, player_num=None):
         """Performs Negamax, returns value of a node"""
         if depth == 0 or self.game_is_over:
-            return self.heuristic()[0]*(1 - 2*abs(player_num-Board.PLAYER_ID))
+            return self.heuristic()[0]#*(1 - 2*abs(player_num-Board.PLAYER_ID))
 
         value = -math.inf
 
