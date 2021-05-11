@@ -26,7 +26,7 @@ class Player:
         """
         # put your code here
         children = self.game_board.find_children()
-        best_child = max(children, key=lambda x: x.heuristic)
+        best_child = max(children, key=lambda x: x.heuristic()[0])
 
         return best_child.moves[-1]
 
@@ -44,5 +44,6 @@ class Player:
         new_game_board = deepcopy(self.game_board)
         self.game_board = new_game_board
         self.game_board.apply_move(opponent_action, player_action)
-        print(f'Heuristic agent heuristic: {self.game_board.heuristic}')
+        print(f'Heuristic agent heuristic (own): {self.game_board.heuristic()}')
+        print(f'Heuristic agent heuristic (opponent): {self.game_board.heuristic(for_opponent=True)}')
         self.game_board.move_n += 2  # Applied 2 moves to the game board
