@@ -77,49 +77,57 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
         else:
             return (current + 1) % 2
 
-    @property
-    def heuristic(self):
+    def heuristic(self, for_opponent=False):
         # TODO: Tune the weight parameters for optimal play. Perhaps through machine learning?
         _WEIGHTS = {
             'throw': 1,
-            'kills': 10,
-            'offensive distance': 5,
-            'defensive distance': 3,
+            'kills': 8,
+            'distance': 4,
             'diversity': 1
         }
+        if not for_opponent:
+            own_player_n = Board.PLAYER_ID
+            opponent_player_n = self.next_player_n(own_player_n)
+        else:
+            opponent_player_n = Board.PLAYER_ID
+            own_player_n = self.next_player_n(opponent_player_n)
 
         # Generate all the scores as numbers between 0 and 1
-        # The throw score rewards having tokens left to throw
-        throw_score = self.remaining_throws[Board.PLAYER_ID] / 9
+        # The throw score rewards having more remaining throws than your opponent
+        throw_score = (self.remaining_throws[own_player_n] - self.remaining_throws[opponent_player_n]) / 9
 
-        # The kills score rewards killing opponent pieces
-        opponent_player_n = self.next_player_n(Board.PLAYER_ID)
+        # The kills score rewards having less dead pieces than your opponent
+        self_n_toks = np.sum(self.n_pieces[own_player_n * 3: own_player_n * 3 + 3])
         opponent_n_toks = np.sum(self.n_pieces[opponent_player_n * 3: opponent_player_n * 3 + 3])
-        kills_score = (9 - self.remaining_throws[opponent_player_n] - opponent_n_toks) / 9
+        self_dead_pieces = 9 - self.remaining_throws[own_player_n] - self_n_toks
+        opponent_dead_pieces = 9 - self.remaining_throws[opponent_player_n] - opponent_n_toks
+        kills_score = (opponent_dead_pieces - self_dead_pieces) / 9
 
         # The token distance scores reward distancing our pieces from attackers and gaining on enemies.
-        offensive_dist_score = 1 - (self.get_average_dist('offensive') / 4)
-        defensive_dist_score = self.get_average_dist('defensive') / 4
+        offensive_dist_score = self.get_offensive_dist(own_player_n) / 4
+        defensive_dist_score = self.get_offensive_dist(opponent_player_n) / 4
+        dist_score = defensive_dist_score - offensive_dist_score
 
         # The diversity score rewards heterogeneous piece placement
-        our_pieces = self.n_pieces[Board.PLAYER_ID * 3: Board.PLAYER_ID * 3 + 3]
-        our_pieces = our_pieces[np.nonzero(our_pieces)[0].tolist()]
-        props = our_pieces / np.sum(our_pieces)
-        entropy = -np.sum(props * np.log2(props))
-        diversity_score = entropy / -np.log2(1/3)
+        player_pieces = [self.n_pieces[i * 3: i * 3 + 3] for i in (own_player_n, opponent_player_n)]
+        diversity_scores = [None, None]
+
+        for i, player in enumerate(player_pieces):
+            player = player[np.nonzero(player)[0].tolist()]
+            props = player / np.sum(player)
+            entropy = -np.sum(props * np.log2(props))
+            diversity_scores[i] = entropy / -np.log2(1 / 3)
+
+        diversity_score = diversity_scores[0] - diversity_scores[1]
 
         return throw_score * _WEIGHTS['throw'] + \
-            kills_score * _WEIGHTS['kills'] + \
-            offensive_dist_score * _WEIGHTS['offensive distance'] + \
-            defensive_dist_score * _WEIGHTS['defensive distance'] + \
-            diversity_score * _WEIGHTS['diversity']
+               kills_score * _WEIGHTS['kills'] + \
+               dist_score * _WEIGHTS['distance'] + \
+               diversity_score * _WEIGHTS['diversity'], \
+               throw_score, kills_score, dist_score, diversity_score
 
-    def get_average_dist(self, type_):
-        option = Board.PLAYER_ID
-        if type_ == 'defensive':
-            option = (option + 1) % 2
-
-        if option == 0:
+    def get_offensive_dist(self, player):
+        if player == 0:
             pairs = np.array([[0, 5], [1, 3], [2, 4]])  # Offensive pairs for upper
         else:
             pairs = np.array([[3, 2], [4, 0], [5, 1]])  # Offensive pairs for lower
@@ -154,20 +162,20 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
     def find_NM_score(self, depth=0, alpha=-math.inf, beta=math.inf, player_num=None):
         """Performs Negamax, returns value of a node"""
         if depth == 0 or self.game_is_over:
-            return self.heuristic
+            return self.heuristic()[0]*(1 - 2*abs(player_num-Board.PLAYER_ID))
 
         value = -math.inf
 
         for child in self.find_top_n_children():
             #print(child.moves)
-            value = max(value, child.find_NM_score(
+            value = max(value, -child.find_NM_score(
                 depth=depth - 1, alpha=-beta, beta=-alpha, player_num=(player_num + 1) % 2))
             alpha = max(alpha, value)
             if alpha >= beta:
                 #print("did a thing")
                 break
 
-        return -value
+        return value
 
     def get_winner(self):
         """Returns a game over status and the winner of the game (if completed)."""
@@ -253,12 +261,24 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
         def get_heuristic(board):
             temp = deepcopy(board)
             temp.apply_move(None, temp.moves[-1])
-            return temp.heuristic
+            return temp.heuristic()[0]
 
         top_n = sorted(all_children, key=get_heuristic, reverse=True)[:_N]
-        for child in top_n:
-            print(child.moves[-1])
+        #for child in top_n:
+            #print(child.moves[-1])
         children.update(top_n)
+
+        return children
+
+    def find_children(self):
+        """Finds all the valid children boards of a game board."""
+        children = set()
+        if self.game_is_over:  # If the game is finished then no moves can be made
+            return children
+
+        for move in self.generate_moves():
+            new_child = self.create_child(move)
+            children.add(new_child)
 
         return children
 

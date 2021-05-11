@@ -41,17 +41,20 @@ class Player:
         """
         # put your code here
         # Find all children
+        if self.game_board.move_n < 21:
+            return max(self.game_board.find_children(), key=lambda x: x.heuristic()[0]).moves[-1]
+
         children = self.game_board.find_top_n_children()
         best_move = None
         # best score is either positive or negative inf depending on whether we maximise or minimise
-        best_score = -math.inf*(1 - 2*self.game_board.current_player_n)
-        for child in children:
+        best_score = -math.inf
+        for i, child in enumerate(children):
+            #print(i)
             # Use negamax to find the score for the child node
             score = child.find_NM_score(depth=2, alpha = -math.inf, beta = math.inf, player_num = child.current_player_n)
             #print(child.moves, score)
             # update best move
-            if ((score > best_score) and self.game_board.current_player_n == Board.PLAYER_NUMS['upper']) or \
-                    ((-score < best_score) and self.game_board.current_player_n == Board.PLAYER_NUMS['lower']):
+            if score > best_score:
                 #print(best_score,best_move)
                 best_move, best_score = child.moves[-1], score
         return best_move
@@ -70,5 +73,5 @@ class Player:
         new_game_board = deepcopy(self.game_board)
         self.game_board = new_game_board
         self.game_board.apply_move(opponent_action, player_action)
-        print(f'Heuristic negamax agent heuristic: {self.game_board.heuristic}')
+        print(f'Heuristic negamax agent heuristic: {self.game_board.heuristic()[0]}')
         self.game_board.move_n += 2  # Applied 2 moves to the game board
