@@ -1,5 +1,5 @@
 $n_games = 100
-$filepath = "competition/CHANGE-ME.txt"
+$filepath = "competition/HA1-5-1-1_HA1-5-5-1.txt"
 
 Remove-Item -path $filepath
 
