@@ -21,17 +21,15 @@
 \tableofcontents
 \section{Approaches}
 Iterations of the player agent used a variety of different search algorithms to determine their future moves. This section will outline the algorithms which were either successfully or unsuccessfully applied to the RoPaSci 360 agent.
-\subsection{Final Approach: Negamax Search with $\alpha, \beta$ and Heuristic Pruning (?)}
-\hl{This is my prediction of what our final approach will be. Waiting to write this section until we actually know.}
 \subsection{Monte Carlo Tree Search}
-Monte Carlo tree search (MCTS) explores deep into the game's search tree by making repeated random moves in order to determine whether an immediate action will continue to be rewarding as the game progresses. It operates in multiple stages, first expanding its exploration of the game tree (the expansion or exploration phase), then performing a `rollout' from one of the leaves of the tree it has expanded \cite{YT-MCTS}. The rollout consists of making random moves for each player until a terminal state is reached, then the back propagation stage is started, where the node at which the rollout begun will be considered more or less desirable depending on whether the terminal state reached was a victory or loss. This change in desirability is propagated up to the parents of said node. The rollout phase is performed repeatedly while there is time left to make a move, and the amount of time allocated was a parameter that could be set to trade between time and accuracy of predictions.\\[2mm]
+Monte Carlo tree search (MCTS) explores deep into the game's search tree by making repeated random moves in order to determine whether an immediate action will continue to be rewarding as the game progresses. It operates in multiple stages, first expanding its exploration of the game tree (the expansion or exploration phase), then performing a `rollout' from one of the leaves of the tree it has expanded \cite{YT-MCTS}. The rollout consists of making random moves for each player until a terminal state is reached. Then, the back propagation stage is started, where the node at which the rollout begun will be considered more or less desirable depending on whether the terminal state reached was a victory, loss or draw. This change in desirability is propagated up to the parents of said node. The rollout phase is performed repeatedly while there is time left to make a move, and the amount of time allocated is a parameter that can be set to determine the tradeoff between accuracy of moves and time taken.\\[2mm]
 There are, however, multiple issues with the implementation of MCTS in RoPaSci 360, which is why it was not the algorithm selected in the final implementation. These will be outlined below.
 \subsubsection{Issues}
 \paragraph{Extreme Branching Factor}
-In a worst case scenario the branching factor for a single move of RoPaSci 360 (by one player) can be well into the 200s. This happens frequently on a player's 9th throw, as they have the option to throw each of 3 tokens onto any of the 61 hexes, resulting in 180 potential moves before even considering the slides and swings of each of the up to 8 pieces they already have in play. The branching factor is the largest issue with the implementation of any tree searching agent for this game, and is especially detrimental to MCTS since it is impossible to perform a reasonable amount of rollouts from every leaf node in the internal tree in an acceptable amount of time. Some attempts to navigate this problem were made, and the methods implemented to manage this are outlined in section \ref{sec: MCTS Optimisations}.
+In a worst case scenario the branching factor for a single move of RoPaSci 360 (by one player) can be grater than 200. This happens frequently on a player's 9th throw, as they have the option to throw each of 3 tokens onto any of the 61 hexes, resulting in 183 potential moves before even considering the slides and swings of each of the up to 8 pieces already in play. The branching factor is the largest issue with the implementation of any tree searching agent for this game, and is especially detrimental to MCTS since it is impossible to perform a reasonable amount of rollouts from every leaf node in the internal tree in an acceptable amount of time. Some attempts to navigate this problem were made, and the methods implemented to manage this are outlined in section \ref{sec: MCTS Optimisations}.
 \paragraph{Inefficiency of Random Moves}
-The rollout phase of MCTS relies on making random moves repeatedly until the game ends. With a large enough number of rollouts the win rate of the random games is supposed to become a good indication of the desirability of the initial state. This is not what happens in MCTS of RoPaSci 360. Instead, considering the enormous amount of moves available at most turns of the game, random moves are so significantly worse than what a reasonable player would choose that the rollouts frequently exceed the turn limit of 360 moves, and when this doesn't happen, the moves vary so wildly in quality that the winner of a random game is an extremely poor indication of the value of the initial state.\\[2mm]
-A secondary effect of this is that the rollouts take a large amount of time to complete, since so many run the game to the upper turn limit. This constrains the amount of rollouts that can be performed, and makes it unreasonable to achieve a large enough sample size to accurately determine the desirability of a node. Attempted methods to overcome this issue are also outlined in \ref{sec: MCTS Optimisations}.
+The rollout phase of MCTS relies on making random moves repeatedly until the game ends. With a large enough number of rollouts, the win rate of the random games becomes a good indication of the desirability of the initial state. This is not what happens in MCTS of RoPaSci 360. Instead, considering the enormous amount of moves available at most turns, random moves are so significantly worse than what a reasonable player would choose that the rollouts frequently exceed the turn limit of 360 moves, and when this doesn't happen, the moves vary so wildly in quality that the winner of a random game is an extremely poor indication of the value of the initial state.\\[2mm]
+A secondary effect of this is that the rollouts take a large amount of time to complete, since many run the game to the upper turn limit. This constrains the amount of rollouts that can be performed, and makes it unreasonable to achieve a large enough sample size to accurately determine the desirability of a node. Attempted methods to overcome this issue are also outlined in \ref{sec: MCTS Optimisations}.
 
 \subsubsection{Optimisations}
 \label{sec: MCTS Optimisations}
@@ -41,11 +39,22 @@ Using the heuristic defined as explained in section \ref{sec: Heuristic} it was 
 Instead of using completely random moves in the rollout phase an attempt was made to select moves from the subset of the top 10 most desirable children, according to the heuristic value. This did perhaps slightly improve the performance of the agent, but as shown in section \ref{sec: Heuristic} the heuristic calculation is somewhat time consuming when performed on so many boards and so this did not yield the desired improvement.
 
 \subsection{Reinforcement Learning with SIMPLE \cite{SIMPLE}}
-SIMPLE, an acronym for \textbf{S}elf-play \textbf{I}n \textbf{M}ulti\textbf{Pl}ayer \textbf{E}nvironments, is a Python library built on OpenAI's Gym \cite{brockman2016openai}. The library specifies an interface for agents similar to the RoPaSci 360 \verb|referee| module, and trains a neural network by using Reinforcement Learning and playing the agents against each other over many iterations. The library requires that the action space (the set of all actions available to a player at any point in the game) and observation space (format of observations provided to the agent before making each decision) are predefined. This guided the design of the data structures used in the board representation of all of the agents that were designed, but ultimately Reinforcement Learning was not pursued for the final agent since it required a much more in depth knowledge of neural network architecture than any members of the group had.\\[2mm]
+SIMPLE, an acronym for \textbf{S}elf-play \textbf{I}n \textbf{M}ulti\textbf{Pl}ayer \textbf{E}nvironments, is a Python library built on OpenAI's Gym \cite{brockman2016openai}. The library specifies an interface for agents similar to the RoPaSci 360 \verb|referee| module, and trains a neural network by using Reinforcement Learning and playing the agents against each other over many iterations. The library requires that the action space (the set of all actions available to a player at any point in the game) and observation space (format of observations provided to the agent before making each decision) are predefined. This guided the design of the data structures used in the board representation of all of the agents that were designed, but ultimately reinforcement learning was not pursued for the final agent since it required a much more in-depth knowledge of neural network architecture than either of the members of the group had.\\[2mm]
 The design of data structures is discussed in more detail in section \ref{sec: Data Structures}.
 
 \subsection{Greedy}
-The Greedy agent is the simplest of the agents which were designed, and either beat or performed competitively with all other agents. The greedy agent evaluates the heuristic function as defined in section \ref{sec: Heuristic} on all children states of the current board and simply selects the move which yields the maximum heuristic value. This agent is extremely time efficient, as it does not construct a search tree, \hl{but for this reason it also does not have the same level of foresight as the adversarial search agents. After optimising the heuristic parameter values this agent makes moves which seem consistently logical, though it is harder to assess their quality when considering the progression of the game far into the future.} 
+The Greedy agent is the simplest of the agents designed, and either beat or performed competitively with all other agents. The greedy agent evaluates the heuristic function as defined in section \ref{sec: Heuristic} on all children states of the current board and simply selects the move which yields the maximum heuristic value. This agent is extremely time efficient, as it does not construct a search tree, but for this reason it also does not have the same level of foresight as the adversarial search agents. After optimising the heuristic parameter values this agent makes moves which seem consistently logical, though it is hard to assess their quality when considering the progression of the game far into the future.
+
+\subsection{NegaMax with Alpha-Beta pruning}
+
+A MiniMax agent seemed to be the most appropriate for the game of RoPasSci 360, and seeing as it a zero sum game, NegaMax was used. Similar to Monte Carlo Tree Search, NegaMax represents the board as a tree where children of a given state are board states reachable by legal moves. It searches through child states to a certain depth, choosing moves from the perspective of each player to maximise the value of a heuristic. Once it reaches a terminal state or the depth limit, it propagates the result back up the tree in such a way that ensures it will play optimally (to the extent that the heuristic is optimal), assuming the opponent will also. Alpha-Beta pruning is an addition to NegaMax that helps prune certain parts of the tree than cannot contain better moves than the ones already found. In this way it reduces the work the algorithm has to do and speeds it up. 
+\newline
+
+\noindent
+Unfortunately, the Negamax algorithm, even when restricted to searching only a small number of the best children (see \ref{sec: MCTS Optimisations}), does not provide results in an appropriate time, even when searching to a depth as little as 3. Due to this drawback, it was not chosen as the final agent.
+
+\subsection{Final Approach: Greedy Agent with Heuristic Optimisation}
+Unfortunately, attempts at a more nuanced algorithm proved to be less successful than hoped, and so it was decided that the simple, effective heuristic agent should be used. In order to tune the heuristic weights to be the most successful,  a testing tool was used to run a large number of test games between two agents with different heuristics.  This is detailed in section \ref{sec: Heuristic Optimisation}. This method gave us the heuristic weights: INSERT HERE WHEN KNOWN. Through further iteration it may be possible to better tune the weightings  or develop a heuristic function that takes into account more features of the board state.
 
 \section{Implementation}
 \subsection{Data Structures}
@@ -115,19 +124,19 @@ In code this was achieved by choosing our player's team (\verb|upper| or \verb|l
 
 \subsection{Heuristic}
 \label{sec: Heuristic}
-The heuristic is an essential element of almost all of the strategies implemented by all of the agents. It returns an estimate of the desirability of a given board state for the agents team relative to other states. The heuristic value considers 5 factors and places different weights on each. These are:
+The heuristic is an essential element of almost all of the strategies implemented by all of the agents. It returns an estimate of the desirability of a given board state for the agents team relative to other states. The heuristic value considers 4 factors and places different weights on each. These are:
 \begin{itemize}
-    \item The number of \textbf{throws} the agent has remaining. More is better.
-    \item The amount of \textbf{dead opponent tokens}, where more is also better.
-    \item An \textbf{offensive distance} score based on the average distance between each of the opponents pieces and closest allied piece which can kill it.\\[2mm]
+    \item The number of \textbf{throws} the agent has more than the opponent the agent. More is better.
+    \item The number of \textbf{dead opponent tokens} minus the number of \textbf{dead player tokens} where more is also better.
+    \item A \textbf{distance} score based on the how close the players tokens are to opponents token's that they can beat (good) and that they get beaten by (bad.) \\[2mm]
     \textit{eg.} If the opponent has one \verb|p| token and the agent's closest \verb|S| token is 3 hexes away, the offensive distance score will be 3. This is averaged over all of the opponents tokens.
-    \item A \textbf{defensive distance} score based on the average distance between each of the agent's pieces and closest enemy piece which can kill it. This is the same as calculating the \textbf{offensive distance} for the opposing player.
     \item A \textbf{diversity} score which rewards heterogeneous piece placement by adding a value proportional to the entropy of the agent's piece distribution to the heuristic. This is desirable as it avoids playing too many of the same kind of token which could all be wiped out by a single opponent. It is calculated as: $$\sum_{i\in\{r,p,s\}} \frac{\#(i)}{\#(r+p+s)} \cdot \log_2 \left( \frac{\#(i)}{\#(r+p+s)} \right) = \sum_{i\in\{r,p,s\}} \Pr(i) \cdot \log_2 \Pr(i)$$
+    The final score is calculated by finding this diversity score for the player and subtracting the diversity score for the opponent.
 \end{itemize}
 All of these scores are normalised to be between 0 and 1 by dividing by each of their maximum possible values. They are then multiplied by a weight, and summed to achieve the final heuristic value. The optimal weight values are discussed in the following section.
 \subsubsection{Heuristic Parameter Optimisation}
-\hl{This hasn't been done, but I feel like we should do this to make the heuristic as good as possible. Find an evidence based method to optimise the parameters.}\\[2mm]
-The \hl{current} weight values are:
+\label{sec: Heuristic Optimisation}
+The parameters for the heuristic function were optimised by trial and error. A script was created that pits two agents against eachother and records the result over a number of iterations. Repeated testing yielded the weight values:
 \begin{itemize}
     \item \textbf{throws}: 1
     \item \textbf{dead opponent tokens}: 10
@@ -135,11 +144,12 @@ The \hl{current} weight values are:
     \item \textbf{defensive distance}: 3
     \item \textbf{diversity}: 1
 \end{itemize}
-This strikes a good balance between conservative play - avoiding opponents it is vulnerable to - while aggressively pursuing kills, giving consideration to retaining a few throws for the late game, and maintaining a diverse selection of pieces.
+\hl{This strikes a good balance between conservative play - avoiding opponents it is vulnerable to - while aggressively pursuing kills, giving consideration to retaining a few throws for the late game, and maintaining a diverse selection of pieces.}
 
 \subsection{Algorithmic Optimisation}
 
 \section{Performance}
+\hl{Include data about the relative performance of the agents}
 \subsection{Win Rates}
 \subsection{Time Complexity}
 
