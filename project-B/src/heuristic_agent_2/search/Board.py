@@ -68,8 +68,8 @@ class Board:  # Putting Node in the brackets because this Inherits from Node cla
         # TODO: Tune the weight parameters for optimal play. Perhaps through machine learning?
         _WEIGHTS = {
             'throw': 1,
-            'kills': 1,
-            'distance': 1,
+            'kills': 5,
+            'distance': 2,
             'diversity': 1
         }
         if not for_opponent:
