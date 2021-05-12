@@ -1,0 +1,1000 @@
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* winner: lower
+* winner: lower
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: lower
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: same game state occurred for 3rd time
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: same game state occurred for 3rd time
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: same game state occurred for 3rd time
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: same game state occurred for 3rd time
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: lower
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: same game state occurred for 3rd time
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: same game state occurred for 3rd time
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* winner: lower
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: lower
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* winner: upper
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* draw: both players have an invincible token
+* winner: upper

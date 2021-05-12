@@ -1,4 +1,4 @@
-from heuristic_agent.search.Board import Board
+from heuristic_agent_2.search.Board import Board
 from copy import deepcopy
 
 

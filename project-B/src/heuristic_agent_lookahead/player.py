@@ -1,4 +1,4 @@
-from heuristic_agent.search.Board import Board
+from heuristic_agent_lookahead.search.Board import Board
 from copy import deepcopy
 
 
@@ -25,9 +25,23 @@ class Player:
         of the game, select an action to play this turn.
         """
         # put your code here
-        children = self.game_board.find_children()
-        best_child = max(children, key=lambda x: x.heuristic()[0])
-        return best_child.moves[-1]
+        lookahead = True
+        if lookahead:
+            newboard = deepcopy(self.game_board)
+            newboard.current_player_n = newboard.next_player_n()
+            children = newboard.find_children()
+            opponent_best_child = max(children, key=lambda x: x.heuristic()[0])
+            opponent_best_move = opponent_best_child.moves[-1]
+            newboard2 = deepcopy(self.game_board)
+            newboard2.apply_move(opponent_best_move, None, no_battle=True)
+            children = newboard2.find_children()
+            best_child = max(children, key=lambda x: x.heuristic()[0])
+            return best_child.moves[-1]
+        else:
+            children = self.game_board.find_children()
+            best_child = max(children, key=lambda x: x.heuristic()[0])
+            return best_child.moves[-1]
+
 
     def update(self, opponent_action, player_action):
         """
