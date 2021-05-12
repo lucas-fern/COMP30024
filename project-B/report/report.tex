@@ -81,7 +81,7 @@ To achieve this, the game's axial coordinate system is mapped to the integers 0-
 \end{verbatim}
 \end{minipage}
 \paragraph{Efficient Operations}
-This data structure for the board not only confers the speed advantage from the use of \verb|numpy| but also allows for some extremely compact operations. An extreme example from the code is that battling the tokens on a hex can be performed in one line. The code is not at all intuitive, but extremely efficient for an operation which is called upon during the creation of any new board. This code, and a brief example of what happens when the operation is performed are shown below as a showcase of the merits of this data structure:
+This data structure for the board not only confers the speed advantage from the use of \verb|numpy| but also allows for some extremely compact operations. An extreme example from the code is that battling the tokens on a hex can be performed in one line. The code is not at all intuitive, but extremely efficient for an operation which is called upon during the creation of any new board. This code, and a brief example of what happens when the operation is performed are detailed below as a showcase of the merits of this data structure:
 
 % For some reason I have to compile from the command line when I include this but I do want to have it in the final version.
 % Compile from command line with:
@@ -116,11 +116,11 @@ This data structure for the board not only confers the speed advantage from the 
 =[1, 0, 0, 0, 0, 0]      As required, the rock has killed all scissors.
 \end{BVerbatim}
 \end{center}
-Many other operations on the board are subject to similar optimisations but will not be shown in the report.
+Many other operations on the board not shown in this report are subject to similar optimisations.
 \paragraph{Information Sets for Simultaneous Play}
 Since RoPaSci 360 is a simultaneous play game it is important to be able to generate a game tree with information sets. In game theory an information set between two nodes of a tree means they don't know which path they have traversed from the parent node. This applies to RoPaSci 360 as when the simultaneous game is modelled in an extensive form game tree, moves should not be reflected on the board until both players have submitted an action.\\[2mm]
 \hl{Might include a tikz image here of an extensive form game with information sets. I made a few when I took ECON20002/20005 which I should be able to adapt.}\\[2mm]
-In code this was achieved by choosing our player's team (\verb|upper| or \verb|lower|) as the root node, and only applying moves to the board in sets of two when it was their turn in the tree. This meant that children of these nodes saw an identical board state to their parent and so the simultaneous nature of the game is preserved.
+In code this was achieved by choosing our player's team (\verb|upper| or \verb|lower|) as the root node, and only applying moves to the board in sets of two when it was their turn in the tree. This meant that children of these nodes were identical to their parents (with the move simply stored in memory) and so the simultaneous nature of the game is preserved.
 
 \subsection{Heuristic}
 \label{sec: Heuristic}
